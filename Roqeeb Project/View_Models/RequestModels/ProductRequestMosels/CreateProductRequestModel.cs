@@ -1,4 +1,6 @@
-﻿namespace Roqeeb_Project.View_Models.RequestModels
+﻿using System.Collections.Generic;
+
+namespace Roqeeb_Project.View_Models.RequestModels
 {
     public class CreateProductRequestModel
     {

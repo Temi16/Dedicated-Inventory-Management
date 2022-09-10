@@ -16,5 +16,6 @@ namespace Roqeeb_Project.Interface.Service
         Task<BaseResponse<ProductDTO>> GetProductByName(string productName, CancellationToken cancellationToken);
         Task<BaseResponse<IEnumerable<ProductDTO>>> ViewAllProducts(CancellationToken cancellationToken);
         Task<BaseResponse<TrackDTO>> TrackProduct(string productName, CancellationToken cancellationToken);
+        
     }
 }

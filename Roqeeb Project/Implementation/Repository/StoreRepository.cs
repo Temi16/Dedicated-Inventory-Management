@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,25 +26,32 @@ namespace Roqeeb_Project.Implementation.Repository
             return store;
         }
 
+        public async Task<IList<Store>> GetAllAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var stores = await _context.Stores
+                .Include(st => st.Sections)
+                .ToListAsync(cancellationToken);
+            return stores;
+        }
+
         public async Task<Store> GetAsync(Expression<Func<Store, bool>> expression, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var store = await _context.Stores
                 .Include(st => st.Sections)
-                .ThenInclude(se => se.SectionName)
                 .SingleOrDefaultAsync(expression, cancellationToken);
             return store;
         }
 
-        public async Task<Store> GetByNameAsync(string storeId, CancellationToken cancellationToken)
+        public async Task<Store> GetByNameAsync(string storeName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (storeId == null) throw new ArgumentNullException(null);
-            var newStore = await _context.Stores
+            if (storeName == null) throw new ArgumentNullException(null);
+            var store = await _context.Stores
                  .Include(st => st.Sections)
-                .ThenInclude(se => se.SectionName)
-                .SingleOrDefaultAsync(s => s.Id == storeId, cancellationToken);
-            return newStore;
+                .SingleOrDefaultAsync(s => s.StoreName == storeName, cancellationToken);
+            return store;
         }
 
         public Task<Store> UpdateAsync(Store store, CancellationToken cancellationToken)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,30 +27,58 @@ namespace Roqeeb_Project.Implementation.Repository
             return section;
         }
 
+        public async Task<IList<Section>> GetAllAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var sections = await _context.Sections
+                .Include(sec => sec.Store)
+                .ToListAsync(cancellationToken);
+            return sections;
+        }
+
         public async Task<Section> GetAsync(Expression<Func<Section, bool>> expression, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var section = await _context.Sections
                 .Include(s => s.Store)
-                .ThenInclude(st => st.StoreName)
                 .SingleOrDefaultAsync(expression, cancellationToken);
             return section;
         }
 
-        public async Task<Section> GetByNameAsync(string sectionId, CancellationToken cancellationToken)
+        public async Task<Section> GetByNameAsync(string sectionName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (sectionId == null) throw new ArgumentNullException(null);
+            if (sectionName == null) throw new ArgumentNullException(null);
             var section = await _context.Sections
                 .Include(s => s.Store)
-                .ThenInclude(st => st.StoreName)
-                .SingleOrDefaultAsync(s => s.Id == sectionId, cancellationToken);
+                .SingleOrDefaultAsync(sec => sec.SectionName == sectionName, cancellationToken);
             return section;
         }
+        
+        public async Task<IList<Section>> GetAllByStoreAsync(Expression<Func<Section, bool>> expression, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var sections = await _context.Sections
+                .Include(sec => sec.Store)
+                .ToListAsync(cancellationToken);
+            return sections;
+                
+        }
+        
 
         public Task<Section> UpdateAsync(Section section, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Section> GetByStoreAsync(Expression<Func<Section, bool>> expression, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var section = await _context.Sections
+                .Include(se => se.Store)
+                .SingleOrDefaultAsync(expression, cancellationToken);
+            return section;
+        }
+        
     }
 }

@@ -17,10 +17,12 @@ namespace Roqeeb_Project.Implementation.Service
     {
         private readonly IProductRepository _productRepository;
         private readonly ISectionRepository _sectionRepository;
-        public ProductService(IProductRepository productRepository, ISectionRepository sectionRepository)
+        private readonly IStoreRepository _storeRepository;
+        public ProductService(IProductRepository productRepository, ISectionRepository sectionRepository, IStoreRepository storeRepository)
         {
             _productRepository = productRepository;
             _sectionRepository = sectionRepository;
+            _storeRepository = storeRepository;
         }
 
         public async Task<BaseResponse<ProductDTO>> CreateProduct(CreateProductRequestModel request, CancellationToken cancellationToken)
@@ -32,6 +34,8 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Product already exists",
                 Status = false
             };
+            //var store = await _storeRepository.GetAllAsync(cancellationToken);
+            //var storeId = store.Select(st => request.StoreId.Contains(st.Id)).SingleOrDefault();
             var section = await _sectionRepository.GetAsync(s => s.SectionName == request.SectionName, cancellationToken);
             if (section == null) return new BaseResponse<ProductDTO>
             {
@@ -45,10 +49,10 @@ namespace Roqeeb_Project.Implementation.Service
                 CostPrice = request.CostPrice,
                 SellingPrice = request.SellingPrice,
                 Quantity = request.Quantity,
-                SectionId = section.Id,
                 IsDeleted = false
             };
             await _productRepository.CreateProductAsync(newProduct, cancellationToken);
+            await _productRepository.AddToSection(newProduct, section.SectionName, cancellationToken);
             return new BaseResponse<ProductDTO>
             {
                 Data = new ProductDTO
@@ -126,12 +130,19 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Product not found",
                 Status = false
             };
+            var storeName = "";
+            var newSection = "";
+            foreach (var section in product.productSections)
+            {
+                newSection = section.Section.SectionName;
+                storeName = section.Section.Store.StoreName;
+            }
             return new BaseResponse<TrackDTO>
             {
                 Data = new TrackDTO
                 {
-                    StoreName = product.Section.Store.StoreName,
-                    SectionName = product.Section.SectionName
+                    StoreName = storeName,
+                    SectionName = newSection
                 },
                 Message = "Successful",
                 Status = true

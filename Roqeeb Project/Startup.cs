@@ -13,9 +13,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Roqeeb_Project.Configure;
 using Roqeeb_Project.Context;
 using Roqeeb_Project.Identity;
 using Roqeeb_Project.Implementation.Identity.Repositories;
+using Roqeeb_Project.Implementation.Repository;
+using Roqeeb_Project.Implementation.Service;
+using Roqeeb_Project.Interface.Repository;
+using Roqeeb_Project.Interface.Service;
 
 namespace Roqeeb_Project
 {
@@ -33,19 +38,12 @@ namespace Roqeeb_Project
         {
             services.AddDbContext<ApplicationContext>(option => option.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
+            services.MyScoped();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Roqeeb_Project", Version = "v1" });
             });
-            services.AddScoped<IUserStore<User>, UserRepository>();
-            services.AddScoped<IUserPasswordStore<User>, UserRepository>();
-            services.AddScoped<IUserRoleStore<User>, UserRepository>();
-            services.AddScoped<IUserEmailStore<User>, UserRepository>();
-            services.AddScoped<IQueryableUserStore<User>, UserRepository>();
-            services.AddScoped<IUserPhoneNumberStore<User>, UserRepository>();
-            services.AddScoped<IRoleStore<Role>, RoleRepository>();
-            services.AddScoped<IRoleValidator<Role>, RoleRepository>();
-            services.AddScoped<IRoleClaimStore<Role>, RoleRepository>();
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

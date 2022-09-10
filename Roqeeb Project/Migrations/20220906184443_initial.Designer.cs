@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Roqeeb_Project.Context;
 
 namespace Roqeeb_Project.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220906184443_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,13 +70,13 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a56878ea-51b1-48c5-8571-2287eb112004",
+                            Id = "82d1c75c-15c0-4025-a3d8-2619c029df16",
                             Age = 20,
                             Email = "raufroqeeb123@gmail.com",
                             FirstName = "Roqeeb",
                             IsDeleted = false,
                             LastName = "Temidayo",
-                            UserId = "3d531df7-0067-4553-b0e0-6de14ec0bbe6"
+                            UserId = "b1c516f7-40a6-4710-824d-7b1cd55f2f73"
                         });
                 });
 
@@ -259,10 +261,15 @@ namespace Roqeeb_Project.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<string>("SectionId")
+                        .HasColumnType("varchar(767)");
+
                     b.Property<double>("SellingPrice")
                         .HasColumnType("double");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SectionId");
 
                     b.ToTable("Products");
                 });
@@ -340,22 +347,28 @@ namespace Roqeeb_Project.Migrations
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("ProductId")
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductId1")
                         .HasColumnType("varchar(767)");
 
                     b.Property<string>("PurchaseId")
                         .HasColumnType("varchar(767)");
 
-                    b.Property<string>("SalesId")
+                    b.Property<int>("SalesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SalesId1")
                         .HasColumnType("varchar(767)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId1");
 
                     b.HasIndex("PurchaseId");
 
-                    b.HasIndex("SalesId");
+                    b.HasIndex("SalesId1");
 
                     b.ToTable("ProductsSales");
                 });
@@ -593,7 +606,7 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a113de61-6504-400a-a8ec-8fff84e9e88c",
+                            Id = "22e0165f-c9e7-4d0d-8a54-0bc69c94ab5f",
                             IsDeleted = false,
                             Name = "Admin"
                         });
@@ -650,7 +663,7 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3d531df7-0067-4553-b0e0-6de14ec0bbe6",
+                            Id = "b1c516f7-40a6-4710-824d-7b1cd55f2f73",
                             Email = "raufroqeeb123@gmail.com",
                             FirstName = "Roqeeb",
                             IsDeleted = false,
@@ -704,10 +717,10 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "155c2d05-13c3-42f9-b3e1-b19b126e662e",
+                            Id = "5df1e99b-84fe-4d80-9478-06ffd20b0136",
                             IsDeleted = false,
-                            RoleId = "a113de61-6504-400a-a8ec-8fff84e9e88c",
-                            UserId = "3d531df7-0067-4553-b0e0-6de14ec0bbe6"
+                            RoleId = "22e0165f-c9e7-4d0d-8a54-0bc69c94ab5f",
+                            UserId = "b1c516f7-40a6-4710-824d-7b1cd55f2f73"
                         });
                 });
 
@@ -747,6 +760,15 @@ namespace Roqeeb_Project.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("Roqeeb_Project.Entities.Product", b =>
+                {
+                    b.HasOne("Roqeeb_Project.Entities.Section", "Section")
+                        .WithMany()
+                        .HasForeignKey("SectionId");
+
+                    b.Navigation("Section");
+                });
+
             modelBuilder.Entity("Roqeeb_Project.Entities.ProductPurchase", b =>
                 {
                     b.HasOne("Roqeeb_Project.Entities.Product", "Product")
@@ -766,7 +788,7 @@ namespace Roqeeb_Project.Migrations
                 {
                     b.HasOne("Roqeeb_Project.Entities.Product", "Product")
                         .WithMany("ProductSales")
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId1");
 
                     b.HasOne("Roqeeb_Project.Entities.Purchase", null)
                         .WithMany("ProductSales")
@@ -774,7 +796,7 @@ namespace Roqeeb_Project.Migrations
 
                     b.HasOne("Roqeeb_Project.Entities.Sales", "Sales")
                         .WithMany("Products")
-                        .HasForeignKey("SalesId");
+                        .HasForeignKey("SalesId1");
 
                     b.Navigation("Product");
 
@@ -784,7 +806,7 @@ namespace Roqeeb_Project.Migrations
             modelBuilder.Entity("Roqeeb_Project.Entities.ProductSection", b =>
                 {
                     b.HasOne("Roqeeb_Project.Entities.Product", "Product")
-                        .WithMany("productSections")
+                        .WithMany()
                         .HasForeignKey("ProductId");
 
                     b.HasOne("Roqeeb_Project.Entities.Section", "Section")
@@ -830,8 +852,6 @@ namespace Roqeeb_Project.Migrations
                     b.Navigation("ProductPurchase");
 
                     b.Navigation("ProductSales");
-
-                    b.Navigation("productSections");
                 });
 
             modelBuilder.Entity("Roqeeb_Project.Entities.Purchase", b =>

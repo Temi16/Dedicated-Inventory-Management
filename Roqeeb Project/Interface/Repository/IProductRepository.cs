@@ -15,5 +15,6 @@ namespace Roqeeb_Project.Interface.Repository
         Task<Product> UpdateProduct(Product product, CancellationToken cancellationToken);
         Task<Product> GetProductByNameAsync(string productName, CancellationToken cancellationToken);
         Task<IList<Product>> ViewProductsAsync(CancellationToken cancellationToken);
+        Task<ProductSection> AddToSection(Product product, string sectionName, CancellationToken cancellationToken);
     }
 }

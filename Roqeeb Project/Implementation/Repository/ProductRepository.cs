@@ -35,6 +35,9 @@ namespace Roqeeb_Project.Implementation.Repository
                 .ThenInclude(pp => pp.Purchase)
                 .Include(p => p.ProductSales)
                 .ThenInclude(ps => ps.Sales)
+                .Include(p => p.productSections)
+                .ThenInclude(ps => ps.Section)
+                .ThenInclude(se => se.Store)
                 .SingleOrDefaultAsync(expression, cancellationToken);
             return product;
         }
@@ -48,6 +51,8 @@ namespace Roqeeb_Project.Implementation.Repository
                 .ThenInclude(pp => pp.Purchase)
                 .Include(p => p.ProductSales)
                 .ThenInclude(ps => ps.Sales)
+                 .Include(p => p.productSections)
+                .ThenInclude(ps => ps.Section)
                 .SingleOrDefaultAsync(p => p.Id == productId, cancellationToken);
             return newProduct;
         }
@@ -61,6 +66,8 @@ namespace Roqeeb_Project.Implementation.Repository
                 .ThenInclude(pp => pp.Purchase)
                 .Include(p => p.ProductSales)
                 .ThenInclude(ps => ps.Sales)
+                .Include(p => p.productSections)
+                .ThenInclude(ps => ps.Section)
                 .SingleOrDefaultAsync(p => p.ProductName == productName, cancellationToken);
             return newProduct;
         }
@@ -83,8 +90,29 @@ namespace Roqeeb_Project.Implementation.Repository
                 .ThenInclude(pp => pp.Purchase)
                 .Include(p => p.ProductSales)
                 .ThenInclude(ps => ps.Sales)
+                 .Include(p => p.productSections)
+                .ThenInclude(ps => ps.Section)
                 .ToListAsync(cancellationToken);
             return products;
+        }
+        public async Task<ProductSection> AddToSection(Product product,string sectionName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (product == null) throw new ArgumentNullException(null);
+            sectionName = sectionName.ToLower();
+            if(string.IsNullOrEmpty(sectionName)) throw new ArgumentNullException(nameof(sectionName));
+            var section = await _context.Sections.SingleOrDefaultAsync(se => se.SectionName == sectionName, cancellationToken);
+            if (section == null) throw new ArgumentException(null);
+            var productSection = new ProductSection
+            {
+                ProductId = product.Id,
+                SectionId = section.Id,
+                IsDeleted = false
+            };
+            await _context.ProductSections.AddAsync(productSection, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            return productSection;
+
         }
     }
 }
