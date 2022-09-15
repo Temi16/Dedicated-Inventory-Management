@@ -6,8 +6,9 @@ namespace Roqeeb_Project.Entities
     public class Purchase : AuditableEntity
     {
         public string ReferenceNo { get; set; }
-        public string ProductName { get; set; }
-        public int Quantity { get; set; }
-        public ICollection<ProductSales> ProductSales { get; set; } = new HashSet<ProductSales>();
+        public string AdminCartId { get; set; }
+        public AdminCart AdminCart { get; set; }
+        
+       
     }
 }

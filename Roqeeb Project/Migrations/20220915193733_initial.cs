@@ -8,13 +8,12 @@ namespace Roqeeb_Project.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Purchases",
+                name: "AdminCarts",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(767)", nullable: false),
-                    ReferenceNo = table.Column<string>(type: "text", nullable: true),
-                    ProductName = table.Column<string>(type: "text", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    TotalAmount = table.Column<double>(type: "double", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -25,7 +24,31 @@ namespace Roqeeb_Project.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Purchases", x => x.Id);
+                    table.PrimaryKey("PK_AdminCarts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(767)", nullable: false),
+                    ProductName = table.Column<string>(type: "text", nullable: true),
+                    ProductDescription = table.Column<string>(type: "text", nullable: true),
+                    CostPrice = table.Column<double>(type: "double", nullable: false),
+                    SellingPrice = table.Column<double>(type: "double", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    IsAvalaible = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
+                    DeletedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DeletedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,6 +132,96 @@ namespace Roqeeb_Project.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Purchases",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(767)", nullable: false),
+                    ReferenceNo = table.Column<string>(type: "text", nullable: true),
+                    AdminCartId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
+                    DeletedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DeletedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Purchases", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Purchases_AdminCarts_AdminCartId",
+                        column: x => x.AdminCartId,
+                        principalTable: "AdminCarts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductAdminCarts",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(767)", nullable: false),
+                    ProductId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    AdminCartId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
+                    DeletedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DeletedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductAdminCarts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductAdminCarts_AdminCarts_AdminCartId",
+                        column: x => x.AdminCartId,
+                        principalTable: "AdminCarts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProductAdminCarts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductsSales",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(767)", nullable: false),
+                    ProductId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    SalesId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
+                    DeletedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DeletedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductsSales", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductsSales_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProductsSales_Sales_SalesId",
+                        column: x => x.SalesId,
+                        principalTable: "Sales",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -258,64 +371,6 @@ namespace Roqeeb_Project.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "varchar(767)", nullable: false),
-                    ProductName = table.Column<string>(type: "text", nullable: true),
-                    ProductDescription = table.Column<string>(type: "text", nullable: true),
-                    CostPrice = table.Column<double>(type: "double", nullable: false),
-                    SellingPrice = table.Column<double>(type: "double", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    SectionId = table.Column<string>(type: "varchar(767)", nullable: true),
-                    IsAvalaible = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
-                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
-                    DeletedOn = table.Column<DateTime>(type: "datetime", nullable: true),
-                    DeletedBy = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Products", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Products_Sections_SectionId",
-                        column: x => x.SectionId,
-                        principalTable: "Sections",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "varchar(767)", nullable: false),
-                    ReferenceNo = table.Column<string>(type: "text", nullable: true),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
-                    CustomerId1 = table.Column<string>(type: "varchar(767)", nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
-                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
-                    DeletedOn = table.Column<DateTime>(type: "datetime", nullable: true),
-                    DeletedBy = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Orders_Customers_CustomerId1",
-                        column: x => x.CustomerId1,
-                        principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ProductPurchases",
                 columns: table => new
                 {
@@ -382,15 +437,13 @@ namespace Roqeeb_Project.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductsSales",
+                name: "Orders",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(767)", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    SalesId = table.Column<int>(type: "int", nullable: false),
-                    ProductId1 = table.Column<string>(type: "varchar(767)", nullable: true),
-                    SalesId1 = table.Column<string>(type: "varchar(767)", nullable: true),
-                    PurchaseId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    ReferenceNo = table.Column<string>(type: "text", nullable: true),
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    CustomerId1 = table.Column<string>(type: "varchar(767)", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -401,23 +454,11 @@ namespace Roqeeb_Project.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductsSales", x => x.Id);
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductsSales_Products_ProductId1",
-                        column: x => x.ProductId1,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProductsSales_Purchases_PurchaseId",
-                        column: x => x.PurchaseId,
-                        principalTable: "Purchases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProductsSales_Sales_SalesId1",
-                        column: x => x.SalesId1,
-                        principalTable: "Sales",
+                        name: "FK_Orders_Customers_CustomerId1",
+                        column: x => x.CustomerId1,
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -425,22 +466,22 @@ namespace Roqeeb_Project.Migrations
             migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "Description", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
-                values: new object[] { "22e0165f-c9e7-4d0d-8a54-0bc69c94ab5f", null, null, null, null, null, false, null, null, "Admin" });
+                values: new object[] { "1dd1ff43-5ab2-4092-9fc4-f4bd2947edeb", null, null, null, null, null, false, null, null, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "Email", "FirstName", "IsDeleted", "IsEmailConfirmed", "LastModifiedBy", "LastModifiedOn", "LastName", "Password", "Username" },
-                values: new object[] { "b1c516f7-40a6-4710-824d-7b1cd55f2f73", null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, false, null, null, "Temidayo", "temi123", "RRT" });
+                values: new object[] { "cb74b9c9-1a7b-4fc5-ac0c-eef2fa46a0e8", null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, false, null, null, "Temidayo", "temi123", "RRT" });
 
             migrationBuilder.InsertData(
                 table: "Admins",
                 columns: new[] { "Id", "Age", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "Email", "FirstName", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "LastName", "UserId" },
-                values: new object[] { "82d1c75c-15c0-4025-a3d8-2619c029df16", 20, null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, null, null, "Temidayo", "b1c516f7-40a6-4710-824d-7b1cd55f2f73" });
+                values: new object[] { "a0984e6e-5b4c-44fa-b971-3568f6c09335", 20, null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, null, null, "Temidayo", "cb74b9c9-1a7b-4fc5-ac0c-eef2fa46a0e8" });
 
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "RoleId", "UserId" },
-                values: new object[] { "5df1e99b-84fe-4d80-9478-06ffd20b0136", null, null, null, null, false, null, null, "22e0165f-c9e7-4d0d-8a54-0bc69c94ab5f", "b1c516f7-40a6-4710-824d-7b1cd55f2f73" });
+                values: new object[] { "965b51ac-eb39-4355-ae9f-cf128bce0e1f", null, null, null, null, false, null, null, "1dd1ff43-5ab2-4092-9fc4-f4bd2947edeb", "cb74b9c9-1a7b-4fc5-ac0c-eef2fa46a0e8" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Admins_UserId",
@@ -466,6 +507,16 @@ namespace Roqeeb_Project.Migrations
                 column: "CustomerId1");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductAdminCarts_AdminCartId",
+                table: "ProductAdminCarts",
+                column: "AdminCartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductAdminCarts_ProductId",
+                table: "ProductAdminCarts",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductPurchases_ProductId1",
                 table: "ProductPurchases",
                 column: "ProductId1");
@@ -474,11 +525,6 @@ namespace Roqeeb_Project.Migrations
                 name: "IX_ProductPurchases_PurchaseId1",
                 table: "ProductPurchases",
                 column: "PurchaseId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Products_SectionId",
-                table: "Products",
-                column: "SectionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductSections_ProductId",
@@ -491,19 +537,19 @@ namespace Roqeeb_Project.Migrations
                 column: "SectionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductsSales_ProductId1",
+                name: "IX_ProductsSales_ProductId",
                 table: "ProductsSales",
-                column: "ProductId1");
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductsSales_PurchaseId",
+                name: "IX_ProductsSales_SalesId",
                 table: "ProductsSales",
-                column: "PurchaseId");
+                column: "SalesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductsSales_SalesId1",
-                table: "ProductsSales",
-                column: "SalesId1");
+                name: "IX_Purchases_AdminCartId",
+                table: "Purchases",
+                column: "AdminCartId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sections_StoreId",
@@ -533,6 +579,9 @@ namespace Roqeeb_Project.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
+                name: "ProductAdminCarts");
+
+            migrationBuilder.DropTable(
                 name: "ProductPurchases");
 
             migrationBuilder.DropTable(
@@ -548,10 +597,13 @@ namespace Roqeeb_Project.Migrations
                 name: "Customers");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Purchases");
 
             migrationBuilder.DropTable(
-                name: "Purchases");
+                name: "Sections");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Sales");
@@ -563,7 +615,7 @@ namespace Roqeeb_Project.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Sections");
+                name: "AdminCarts");
 
             migrationBuilder.DropTable(
                 name: "Stores");

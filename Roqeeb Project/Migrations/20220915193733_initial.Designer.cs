@@ -9,8 +9,8 @@ using Roqeeb_Project.Context;
 namespace Roqeeb_Project.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220908221607_second")]
-    partial class second
+    [Migration("20220915193733_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -70,14 +70,51 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a56878ea-51b1-48c5-8571-2287eb112004",
+                            Id = "a0984e6e-5b4c-44fa-b971-3568f6c09335",
                             Age = 20,
                             Email = "raufroqeeb123@gmail.com",
                             FirstName = "Roqeeb",
                             IsDeleted = false,
                             LastName = "Temidayo",
-                            UserId = "3d531df7-0067-4553-b0e0-6de14ec0bbe6"
+                            UserId = "cb74b9c9-1a7b-4fc5-ac0c-eef2fa46a0e8"
                         });
+                });
+
+            modelBuilder.Entity("Roqeeb_Project.Entities.AdminCart", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<double>("TotalAmount")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AdminCarts");
                 });
 
             modelBuilder.Entity("Roqeeb_Project.Entities.Customer", b =>
@@ -269,6 +306,47 @@ namespace Roqeeb_Project.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Roqeeb_Project.Entities.ProductAdminCart", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<string>("AdminCartId")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("ProductId")
+                        .HasColumnType("varchar(767)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminCartId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductAdminCarts");
+                });
+
             modelBuilder.Entity("Roqeeb_Project.Entities.ProductPurchase", b =>
                 {
                     b.Property<string>("Id")
@@ -345,17 +423,12 @@ namespace Roqeeb_Project.Migrations
                     b.Property<string>("ProductId")
                         .HasColumnType("varchar(767)");
 
-                    b.Property<string>("PurchaseId")
-                        .HasColumnType("varchar(767)");
-
                     b.Property<string>("SalesId")
                         .HasColumnType("varchar(767)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("PurchaseId");
 
                     b.HasIndex("SalesId");
 
@@ -408,6 +481,9 @@ namespace Roqeeb_Project.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("varchar(767)");
 
+                    b.Property<string>("AdminCartId")
+                        .HasColumnType("varchar(767)");
+
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
@@ -429,16 +505,12 @@ namespace Roqeeb_Project.Migrations
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("ProductName")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
                     b.Property<string>("ReferenceNo")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AdminCartId");
 
                     b.ToTable("Purchases");
                 });
@@ -595,7 +667,7 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a113de61-6504-400a-a8ec-8fff84e9e88c",
+                            Id = "1dd1ff43-5ab2-4092-9fc4-f4bd2947edeb",
                             IsDeleted = false,
                             Name = "Admin"
                         });
@@ -652,7 +724,7 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3d531df7-0067-4553-b0e0-6de14ec0bbe6",
+                            Id = "cb74b9c9-1a7b-4fc5-ac0c-eef2fa46a0e8",
                             Email = "raufroqeeb123@gmail.com",
                             FirstName = "Roqeeb",
                             IsDeleted = false,
@@ -706,10 +778,10 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "155c2d05-13c3-42f9-b3e1-b19b126e662e",
+                            Id = "965b51ac-eb39-4355-ae9f-cf128bce0e1f",
                             IsDeleted = false,
-                            RoleId = "a113de61-6504-400a-a8ec-8fff84e9e88c",
-                            UserId = "3d531df7-0067-4553-b0e0-6de14ec0bbe6"
+                            RoleId = "1dd1ff43-5ab2-4092-9fc4-f4bd2947edeb",
+                            UserId = "cb74b9c9-1a7b-4fc5-ac0c-eef2fa46a0e8"
                         });
                 });
 
@@ -749,6 +821,21 @@ namespace Roqeeb_Project.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("Roqeeb_Project.Entities.ProductAdminCart", b =>
+                {
+                    b.HasOne("Roqeeb_Project.Entities.AdminCart", "AdminCart")
+                        .WithMany("ProductAdminsCart")
+                        .HasForeignKey("AdminCartId");
+
+                    b.HasOne("Roqeeb_Project.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("AdminCart");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Roqeeb_Project.Entities.ProductPurchase", b =>
                 {
                     b.HasOne("Roqeeb_Project.Entities.Product", "Product")
@@ -770,12 +857,8 @@ namespace Roqeeb_Project.Migrations
                         .WithMany("ProductSales")
                         .HasForeignKey("ProductId");
 
-                    b.HasOne("Roqeeb_Project.Entities.Purchase", null)
-                        .WithMany("ProductSales")
-                        .HasForeignKey("PurchaseId");
-
                     b.HasOne("Roqeeb_Project.Entities.Sales", "Sales")
-                        .WithMany("Products")
+                        .WithMany("ProductSales")
                         .HasForeignKey("SalesId");
 
                     b.Navigation("Product");
@@ -796,6 +879,15 @@ namespace Roqeeb_Project.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Section");
+                });
+
+            modelBuilder.Entity("Roqeeb_Project.Entities.Purchase", b =>
+                {
+                    b.HasOne("Roqeeb_Project.Entities.AdminCart", "AdminCart")
+                        .WithMany()
+                        .HasForeignKey("AdminCartId");
+
+                    b.Navigation("AdminCart");
                 });
 
             modelBuilder.Entity("Roqeeb_Project.Entities.Section", b =>
@@ -822,6 +914,11 @@ namespace Roqeeb_Project.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Roqeeb_Project.Entities.AdminCart", b =>
+                {
+                    b.Navigation("ProductAdminsCart");
+                });
+
             modelBuilder.Entity("Roqeeb_Project.Entities.Customer", b =>
                 {
                     b.Navigation("Order");
@@ -836,14 +933,9 @@ namespace Roqeeb_Project.Migrations
                     b.Navigation("productSections");
                 });
 
-            modelBuilder.Entity("Roqeeb_Project.Entities.Purchase", b =>
-                {
-                    b.Navigation("ProductSales");
-                });
-
             modelBuilder.Entity("Roqeeb_Project.Entities.Sales", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("ProductSales");
                 });
 
             modelBuilder.Entity("Roqeeb_Project.Entities.Section", b =>
