@@ -19,5 +19,6 @@ namespace Roqeeb_Project.Implementation.Service
             _adminRepository = adminRepository;
             _productRepository = productRepository;
         }
+
     }
 }

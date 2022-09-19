@@ -8,6 +8,8 @@ using Roqeeb_Project.View_Models.ResponseModels;
 
 namespace Roqeeb_Project.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class AdminCartController : Controller
     {
         private readonly IAdminCartService _adminCartService;
@@ -35,11 +37,11 @@ namespace Roqeeb_Project.Controllers
             if (cart.Status == false)
             {
                 newCart = await _adminCartService.CreateCart(cancellationToken);
-                await _adminCartService.AddToCart(product.Data.Id, newCart.Data.Id, cancellationToken);
-                return Ok(newCart);
+                var addCart = await _adminCartService.AddToCart(product.Data.Id, newCart.Data.Id, cancellationToken);
+                return Ok(addCart);
             }
-            await _adminCartService.AddToCart(product.Data.Id, cart.Data.Id, cancellationToken);
-            return Ok(cart);
+            var addToCart = await _adminCartService.AddToCart(product.Data.Id, cart.Data.Id, cancellationToken);
+            return Ok(addToCart);
 
         }
     }

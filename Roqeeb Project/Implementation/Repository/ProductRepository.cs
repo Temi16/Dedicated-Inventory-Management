@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,7 +54,7 @@ namespace Roqeeb_Project.Implementation.Repository
                 .ThenInclude(ps => ps.Sales)
                  .Include(p => p.productSections)
                 .ThenInclude(ps => ps.Section)
-                .SingleOrDefaultAsync(p => p.Id == productId, cancellationToken);
+                .SingleOrDefaultAsync(p => p.Id == productId && p.IsDeleted == false, cancellationToken);
             return newProduct;
         }
 
@@ -68,7 +69,7 @@ namespace Roqeeb_Project.Implementation.Repository
                 .ThenInclude(ps => ps.Sales)
                 .Include(p => p.productSections)
                 .ThenInclude(ps => ps.Section)
-                .SingleOrDefaultAsync(p => p.ProductName == productName, cancellationToken);
+                .SingleOrDefaultAsync(p => p.ProductName == productName && p.IsDeleted == false, cancellationToken);
             return newProduct;
         }
 
@@ -90,8 +91,9 @@ namespace Roqeeb_Project.Implementation.Repository
                 .ThenInclude(pp => pp.Purchase)
                 .Include(p => p.ProductSales)
                 .ThenInclude(ps => ps.Sales)
-                 .Include(p => p.productSections)
+                .Include(p => p.productSections)
                 .ThenInclude(ps => ps.Section)
+                .Where(p => p.IsDeleted == false)
                 .ToListAsync(cancellationToken);
             return products;
         }
@@ -114,5 +116,7 @@ namespace Roqeeb_Project.Implementation.Repository
             return productSection;
 
         }
+
+      
     }
 }

@@ -6,6 +6,8 @@ using Roqeeb_Project.Interface.Service;
 
 namespace Roqeeb_Project.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class PurchaseController : Controller
     {
         private readonly IPurchaseService _purchaseService;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Roqeeb_Project.Auth.Service;
 using Roqeeb_Project.DTO_s;
 using Roqeeb_Project.Entities;
 using Roqeeb_Project.Interface.Repository;
@@ -18,11 +19,13 @@ namespace Roqeeb_Project.Implementation.Service
         private readonly IProductRepository _productRepository;
         private readonly ISectionRepository _sectionRepository;
         private readonly IStoreRepository _storeRepository;
-        public ProductService(IProductRepository productRepository, ISectionRepository sectionRepository, IStoreRepository storeRepository)
+        private readonly IIdentityService _identityService;
+        public ProductService(IProductRepository productRepository, ISectionRepository sectionRepository, IStoreRepository storeRepository, IIdentityService identityService)
         {
             _productRepository = productRepository;
             _sectionRepository = sectionRepository;
             _storeRepository = storeRepository;
+            _identityService = identityService;
         }
 
         public async Task<BaseResponse<ProductDTO>> CreateProduct(CreateProductRequestModel request, CancellationToken cancellationToken)
@@ -49,6 +52,9 @@ namespace Roqeeb_Project.Implementation.Service
                 CostPrice = request.CostPrice,
                 SellingPrice = request.SellingPrice,
                 Quantity = request.Quantity,
+                CreatedBy = _identityService.GetUserIdentity(),
+                CreatedOn = DateTime.UtcNow,
+                IsAvalaible = request.IsAvalaible,
                 IsDeleted = false
             };
             await _productRepository.CreateProductAsync(newProduct, cancellationToken);
@@ -65,6 +71,27 @@ namespace Roqeeb_Project.Implementation.Service
                     Description = newProduct.ProductDescription
                 },
                 Message = "Successfully Creaated",
+                Status = true
+            };
+        }
+
+        public async Task<BaseResponse<ProductDTO>> DeleteProduct(string productName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var product = await _productRepository.GetProductByNameAsync(productName, cancellationToken);
+            product.IsDeleted = true;
+            await _productRepository.UpdateProduct(product, cancellationToken);
+            return new BaseResponse<ProductDTO>
+            {
+                Data = new ProductDTO
+                {
+                    Id = product.Id,
+                    ProductName = product.ProductName,
+                    Quantity = product.Quantity,
+                    CostPrice = product.CostPrice,
+                    SellingPrice = product.SellingPrice
+                },
+                Message = "Deleted Successfully",
                 Status = true
             };
         }
@@ -124,7 +151,7 @@ namespace Roqeeb_Project.Implementation.Service
         public async Task<BaseResponse<TrackDTO>> TrackProduct(string productName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var product = await _productRepository.GetProductAsync(p => p.ProductName == productName, cancellationToken);
+            var product = await _productRepository.GetProductAsync(p => p.ProductName == productName && p.IsDeleted == false, cancellationToken);
             if (product == null) return new BaseResponse<TrackDTO>
             {
                 Message = "Product not found",
@@ -162,6 +189,8 @@ namespace Roqeeb_Project.Implementation.Service
             product.CostPrice = request.CostPrice == 0 ? product.CostPrice : request.CostPrice;
             product.SellingPrice = request.SellngPrice == 0 ? product.SellingPrice : request.SellngPrice;
             product.ProductName = request.ProductName ?? request.ProductName;
+            product.LastModifiedBy = _identityService.GetUserIdentity();
+            product.LastModifiedOn = DateTime.UtcNow;
             await _productRepository.UpdateProduct(product, cancellationToken);
             return new BaseResponse<ProductDTO>
             {
@@ -172,7 +201,7 @@ namespace Roqeeb_Project.Implementation.Service
                     ProductName = product.ProductName,
                     CostPrice = product.CostPrice,
                     Quantity = product.Quantity,
-                    SellingPrice = product.SellingPrice
+                    SellingPrice = product.SellingPrice,
                 },
                 Message = "Product Successfully Updated",
                 Status = true

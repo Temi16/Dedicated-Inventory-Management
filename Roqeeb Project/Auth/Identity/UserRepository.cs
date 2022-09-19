@@ -140,10 +140,17 @@ namespace Roqeeb_Project.Implementation.Identity.Repositories
             throw new System.NotImplementedException();
         }
 
-        public Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken)
+        public async Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            var myUser = await FindByEmailAsync(user.Email, cancellationToken);
+            if (myUser == null) return "null";
+            var salt = myUser.Salt;
+            var passwordHash = $"{user.Password}{salt}";
+            return passwordHash;
+
         }
+       
 
         public Task<string> GetPhoneNumberAsync(User user, CancellationToken cancellationToken)
         {

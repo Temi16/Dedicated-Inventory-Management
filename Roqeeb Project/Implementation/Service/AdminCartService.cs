@@ -52,14 +52,30 @@ namespace Roqeeb_Project.Implementation.Service
             cancellationToken.ThrowIfCancellationRequested();
             await _adminCartRepository.AddProductToCart(productId, adminCartId, cancellationToken);
             var cart = await _adminCartRepository.GetAsync(ac => ac.Id == adminCartId, cancellationToken);
+            var getProduct = await _productRepository.GetProductByIdAsync(productId, cancellationToken);
+            List<Product> products = new List<Product>();
+            foreach(var item in cart.ProductAdminsCart)
+            {
+                products.Add(item.Product);
+            }
+            if(products.Contains(getProduct))
+            {
+                return new BaseResponse<AdminCartDTO>
+                {
+                    Message = "Product exists in cart",
+                    Status = false
+                };
+            }
+            
             return new BaseResponse<AdminCartDTO>
             {
                 Data = new AdminCartDTO
                 {
                     Id = cart.Id,
-                    products = cart.ProductAdminsCart.Select(p => p.Product).Select(pr => new ProductDTO
+                    products = products.Select(p => new ProductDTO
                     {
-                        ProductName = pr.ProductName,
+                        Id = p.Id,
+                        ProductName = p.ProductName
                     }).ToList(),
                 },
                 Message = "Successful",

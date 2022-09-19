@@ -12,6 +12,7 @@ namespace Roqeeb_Project.Identity
         public string Password { get; set; }
         public string Username { get; set; }
         public bool IsEmailConfirmed { get; set; }
+        public string Salt { get; set; }
         public Admin Admin { get; set; }
         public Customer Customer { get; set; }
         public Employee Employee { get; set; }
