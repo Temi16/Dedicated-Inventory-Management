@@ -15,11 +15,12 @@ namespace Roqeeb_Project.Implementation.Service
     {
         private readonly IAdminCartRepository _adminCartRepository;
         private readonly IProductRepository _productRepository;
-        private readonly IPurchaseRepository _purchaseRepository;
-        public AdminCartService(IAdminCartRepository adminCartRepository, IProductRepository productRepository, IPurchaseRepository purchaseRepository)
+        private readonly IProductCartRepository _productCartRepository;
+        public AdminCartService(IAdminCartRepository adminCartRepository, IProductRepository productRepository, IProductCartRepository productCartRepository)
         {
             _adminCartRepository = adminCartRepository;
             _productRepository = productRepository;
+            _productCartRepository = productCartRepository;
         }
 
 
@@ -42,23 +43,30 @@ namespace Roqeeb_Project.Implementation.Service
             await _adminCartRepository.CreateAsync(cart, cancellationToken);
             return new BaseResponse<AdminCartDTO>
             {
-               
+                Data = new AdminCartDTO
+                {
+                    Id = cart.Id,
+                    TotalAmount = 0,
+                    Products = null
+                },
                 Message = "Successful",
                 Status = true
             };
         }
-        public async Task<BaseResponse<AdminCartDTO>> AddToCart(string productId, string adminCartId, CancellationToken cancellationToken)
+        public async Task<BaseResponse<AdminCartDTO>> AddToCart(AddToCartRequestModel request, string adminCartId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await _adminCartRepository.AddProductToCart(productId, adminCartId, cancellationToken);
+            var product = await _productRepository.GetProductByNameAsync(request.ProductName, cancellationToken);
+            
             var cart = await _adminCartRepository.GetAsync(ac => ac.Id == adminCartId, cancellationToken);
-            var getProduct = await _productRepository.GetProductByIdAsync(productId, cancellationToken);
-            List<Product> products = new List<Product>();
-            foreach(var item in cart.ProductAdminsCart)
+            
+            List<string> products = new List<string>();
+            foreach (var item in cart.productCarts)
             {
-                products.Add(item.Product);
+                products.Add(item.ProductName);
+                
             }
-            if(products.Contains(getProduct))
+            if (products.Contains(product.ProductName))
             {
                 return new BaseResponse<AdminCartDTO>
                 {
@@ -66,16 +74,24 @@ namespace Roqeeb_Project.Implementation.Service
                     Status = false
                 };
             }
-            
+            await _adminCartRepository.AddProductToCart(product.Id, adminCartId, cancellationToken);
+            var productCart = new ProductCart
+            {
+                ProductName = request.ProductName,
+                Quantity = request.ProductQuantity,
+                AdminCartId = cart.Id
+            };
+            await _productCartRepository.CreateAsync(productCart, cancellationToken);
+            var productCarts = await _productCartRepository.GetProductCartByCartId(cart.Id, cancellationToken);
             return new BaseResponse<AdminCartDTO>
             {
                 Data = new AdminCartDTO
                 {
                     Id = cart.Id,
-                    products = products.Select(p => new ProductDTO
+                    Products = productCarts.Select(pc => new ProductCartDTO
                     {
-                        Id = p.Id,
-                        ProductName = p.ProductName
+                        ProductName = pc.ProductName,
+                        Quantity = pc.Quantity
                     }).ToList(),
                 },
                 Message = "Successful",
@@ -129,7 +145,7 @@ namespace Roqeeb_Project.Implementation.Service
             
         }
 
-        public async Task<BaseResponse<AdminCartDTO>> UpdateCart(string cartId, CancellationToken cancellationToken)
+        public async Task<BaseResponse<AdminCartDTO>> EditUpdateCart(string cartId, string productCartName, int Quantity, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (string.IsNullOrEmpty(cartId)) throw new ArgumentNullException(null);
@@ -139,12 +155,36 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Does not exist",
                 Status = false
             };
-            cart.IsActive = false;
-            await _adminCartRepository.UpdateAsync(cart, cancellationToken);
+
+            var productCart = await _productCartRepository.GetAsync(pc => pc.ProductName == productCartName && pc.AdminCartId == cart.Id, cancellationToken);
+            productCart.Quantity = Quantity;
+            await _productCartRepository.UpdateAsync(productCart, cancellationToken);
             return new BaseResponse<AdminCartDTO>
             {
-                Message = "successfully updated",
+               
+                Message = "Successfully Updated",
                 Status = true
+
+            };
+        }
+        public async Task<BaseResponse<AdminCartDTO>> DeleteUpdateCart(string cartId, string productCartName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (string.IsNullOrEmpty(cartId)) throw new ArgumentNullException(null);
+            var cart = await _adminCartRepository.GetById(cartId, cancellationToken);
+            if (cart == null) return new BaseResponse<AdminCartDTO>
+            {
+                Message = "Does not exist",
+                Status = false
+            };
+            var productCart = await _productCartRepository.GetAsync(pc => pc.ProductName == productCartName && pc.AdminCartId == cart.Id, cancellationToken);
+            await _productCartRepository.DeleteAsync(productCart, cancellationToken);
+            return new BaseResponse<AdminCartDTO>
+            {
+
+                Message = "Successfully Updated",
+                Status = true
+
             };
         }
     }

@@ -16,7 +16,7 @@ namespace Roqeeb_Project.Auth.Service
         string GetClaimValue(string type);
         string GenerateSalt();
         string PassWordHash(string password, string salt = null);
-        Task<BaseResponse<UserDTO>> Login(LoginRequestModel request, CancellationToken cancellationToken);
+        
 
 
     }

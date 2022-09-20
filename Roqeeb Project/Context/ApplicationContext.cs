@@ -8,10 +8,9 @@ namespace Roqeeb_Project.Context
 {
     public class ApplicationContext : DbContext
     {
-        private readonly IIdentityService _identityService;
-        public ApplicationContext(DbContextOptions<ApplicationContext> options, IIdentityService identityService) : base(options)
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
-            _identityService = identityService; 
+            
         }
        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,7 +31,7 @@ namespace Roqeeb_Project.Context
                .HasForeignKey<Employee>(d => d.UserId);
             string userId = Guid.NewGuid().ToString();
             string adminId = Guid.NewGuid().ToString();
-            string salt = _identityService.GenerateSalt();
+            
             modelBuilder.Entity<User>().HasData(new User
             {
                 Id = userId,
@@ -40,9 +39,9 @@ namespace Roqeeb_Project.Context
                 LastName = "Temidayo",
                 Email = "raufroqeeb123@gmail.com",
                 Username = "RRT",
-                Password = _identityService.PassWordHash("temi123", salt),
+                Password = "temi123",
                 IsDeleted = false,
-                Salt = salt,
+               
                 IsEmailConfirmed = true
                 
             }); ;
@@ -72,7 +71,7 @@ namespace Roqeeb_Project.Context
             });
 
         }
-
+        public DbSet<ProductCart> ProductsCarts { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<AdminCart> AdminCarts { get; set; }
         public DbSet<ProductAdminCart> ProductAdminCarts { get; set; }

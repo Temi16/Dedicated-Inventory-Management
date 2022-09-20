@@ -7,11 +7,20 @@ namespace Roqeeb_Project.DTO_s
     {
         public string Id { get; set; }
         public double TotalAmount { get; set; }
-        public IList<ProductDTO> products { get; set; }
+        public IList<ProductCartDTO> Products { get; set; }
     }
-    public class CreateCartRequestModel
+    public class ProductCartDTO
     {
-        public string PurchaseId { get; set; }
+        public string ProductName { get; set; }
+        public int Quantity { get; set; }
+    }
+
+
+    public class AddToCartRequestModel
+    {
+        public string ProductName { get; set; }
+        public int ProductQuantity { get; set; }
+       
         
     }
 }

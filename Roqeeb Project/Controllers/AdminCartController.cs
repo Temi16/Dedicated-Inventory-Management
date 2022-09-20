@@ -28,21 +28,36 @@ namespace Roqeeb_Project.Controllers
             return Ok(cart);
         }
         [HttpPost("AddToCart")]
-        public async Task<IActionResult> AddToCart([FromForm]string productName, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddToCart([FromForm]AddToCartRequestModel request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var product = await _productService.GetProductByName(productName, cancellationToken); 
+            var product = await _productService.GetProductByName(request.ProductName, cancellationToken); 
             var cart = await _adminCartService.GetByStatus(cancellationToken);
-            BaseResponse<AdminCartDTO> newCart = null;
             if (cart.Status == false)
             {
+                BaseResponse<AdminCartDTO> newCart = null;
                 newCart = await _adminCartService.CreateCart(cancellationToken);
-                var addCart = await _adminCartService.AddToCart(product.Data.Id, newCart.Data.Id, cancellationToken);
+                var addCart = await _adminCartService.AddToCart(request, newCart.Data.Id, cancellationToken);
                 return Ok(addCart);
             }
-            var addToCart = await _adminCartService.AddToCart(product.Data.Id, cart.Data.Id, cancellationToken);
+            var addToCart = await _adminCartService.AddToCart(request, cart.Data.Id, cancellationToken);
             return Ok(addToCart);
 
         }
+        [HttpPut("UpdateCart")]
+        public async Task<IActionResult> EditAdminCart(string cartId, string productCartName, int Quantity, CancellationToken cancellationToken)
+        {
+            var updateCart = await _adminCartService.EditUpdateCart(cartId, productCartName, Quantity, cancellationToken);
+            if (updateCart.Status == false) return BadRequest(updateCart);
+            return Ok(updateCart);
+        }
+        [HttpDelete("DeleteProductCart")]
+        public async Task<IActionResult> DeleteProductInAdminCart(string cartId, string productCartName, CancellationToken cancellationToken)
+        {
+            var deleteProductCart = await _adminCartService.DeleteUpdateCart(cartId, productCartName, cancellationToken);
+            if (deleteProductCart.Status == false) return BadRequest(deleteProductCart);
+            return Ok(deleteProductCart);
+        }
+
     }
 }

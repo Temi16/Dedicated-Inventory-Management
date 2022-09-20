@@ -8,6 +8,7 @@ namespace Roqeeb_Project.Entities
         public bool IsActive { get; set; } = true;
         public double TotalAmount { get; set; }
         public IList<ProductAdminCart> ProductAdminsCart { get; set; }
+        public ICollection<ProductCart> productCarts { get; set; } = new List<ProductCart>();
         
     }
 }

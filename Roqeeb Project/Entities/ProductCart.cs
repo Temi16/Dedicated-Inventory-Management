@@ -2,13 +2,11 @@
 
 namespace Roqeeb_Project.Entities
 {
-    public class ProductAdminCart : AuditableEntity
+    public class ProductCart : AuditableEntity
     {
-        public string ProductId { get; set; }
-        public Product Product { get; set; }
+        public string ProductName { get; set; }
+        public int Quantity { get; set; }
         public string AdminCartId { get; set; }
         public AdminCart AdminCart { get; set; }
-     
-
     }
 }

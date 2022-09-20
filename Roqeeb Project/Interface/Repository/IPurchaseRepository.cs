@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,9 @@ namespace Roqeeb_Project.Interface.Repository
     {
         Task<Purchase> AddAsync(Purchase purchase, CancellationToken cancellationToken);
         Task<Purchase> GetAsync(Expression<Func<Purchase, bool>> expression, CancellationToken cancellationToken);
-       
+        Task<Purchase> GetByDateAsync(DateTime date, CancellationToken cancellationToken);
+        Task<IList<Purchase>> GetAllAsync(Expression<Func<Purchase, bool>> expression, CancellationToken cancellationToken);
+        Task<IList<Purchase>> GetAll(CancellationToken cancellationToken);
+        
     }
 }

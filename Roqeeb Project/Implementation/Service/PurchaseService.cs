@@ -1,4 +1,7 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Roqeeb_Project.DTO_s;
 using Roqeeb_Project.Entities;
@@ -53,6 +56,51 @@ namespace Roqeeb_Project.Implementation.Service
                 Status = true
             };
 
+        }
+
+        public async Task<BaseResponse<IList<PurchaseDTO>>> GetAll(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var purchases = await _purchaseRepository.GetAll(cancellationToken);
+            if (purchases.Count == 0) return new BaseResponse<IList<PurchaseDTO>>
+            {
+                Message = "Failed",
+                Status = false
+            };
+            return new BaseResponse<IList<PurchaseDTO>>
+            {
+                Data = purchases.Select(p => new PurchaseDTO
+                {
+                    Id = p.Id,
+                    CartId = p.Id
+
+                }).ToList(),
+                Message = "Successful",
+                Status = true
+            };
+        }
+
+        public async Task<BaseResponse<IList<PurchaseDTO>>> GetByDate(DateTime date, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            date = date.ToUniversalTime();
+            var purchases = await _purchaseRepository.GetAllAsync(p => p.CreatedOn == date, cancellationToken);
+            if (purchases.Count == 0) return new BaseResponse<IList<PurchaseDTO>>
+            {
+                Message = "Failed",
+                Status = false
+            };
+            return new BaseResponse<IList<PurchaseDTO>>
+            {
+                Data = purchases.Select(p => new PurchaseDTO
+                {
+                    Id = p.Id,
+                    CartId = p.Id
+
+                }).ToList(),
+                Message = "Successful",
+                Status = true
+            };
         }
     }
 }

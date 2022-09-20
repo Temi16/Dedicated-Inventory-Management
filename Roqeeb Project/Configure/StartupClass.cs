@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Roqeeb_Project.Auth.Service;
 using Roqeeb_Project.Context;
 using Roqeeb_Project.Identity;
 using Roqeeb_Project.Implementation.Identity.Repositories;
@@ -28,18 +31,20 @@ namespace Roqeeb_Project.Configure
         public static IServiceCollection MyScoped(this IServiceCollection services)
         {
             services.AddScoped<IUserStore<User>, UserRepository>();
-            services.AddScoped<IUserPasswordStore<User>, UserRepository>();
-            services.AddScoped<IUserRoleStore<User>, UserRepository>();
-            services.AddScoped<IUserEmailStore<User>, UserRepository>();
-            services.AddScoped<IQueryableUserStore<User>, UserRepository>();
-            services.AddScoped<IUserPhoneNumberStore<User>, UserRepository>();
+         //   services.AddScoped<IUserPasswordStore<User>, UserRepository>();
+            //services.AddScoped<IUserRoleStore<User>, UserRepository>();
+            //services.AddScoped<IUserEmailStore<User>, UserRepository>();
+            //services.AddScoped<IQueryableUserStore<User>, UserRepository>();
+          //  services.AddScoped<IUserPhoneNumberStore<User>, UserRepository>();
             services.AddScoped<IRoleStore<Role>, RoleRepository>();
-            services.AddScoped<IRoleValidator<Role>, RoleRepository>();
-            services.AddScoped<IRoleClaimStore<Role>, RoleRepository>();
+            //services.AddScoped<IRoleValidator<Role>, RoleRepository>();
+            //services.AddScoped<IRoleClaimStore<Role>, RoleRepository>();
+            services.AddIdentity<User, Role>().AddDefaultTokenProviders();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IAdminRepository, AdminRepository>();
             services.AddScoped<ISectionRepository, SectionRepository>();
             services.AddScoped<IStoreRepository, StoreRepository>();
+            services.AddScoped<IProductCartRepository, ProductCartRepository>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IStoreService, StoreService>();
@@ -48,7 +53,8 @@ namespace Roqeeb_Project.Configure
             services.AddScoped<IAdminCartService, AdminCartService>();
             services.AddScoped<IPurchaseRepository, PurchaseRepository>();
             services.AddScoped<IAdminCartRepository, AdminCartRepository>();
-
+            services.AddScoped<IIdentityService, IdentityService>();
+           
             return services;
         }
     }

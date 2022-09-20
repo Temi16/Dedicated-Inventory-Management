@@ -33,6 +33,7 @@ namespace Roqeeb_Project.Implementation.Repository
             var allCart = await _context.AdminCarts
                 .Include(ac => ac.ProductAdminsCart)
                 .ThenInclude(pc => pc.Product)
+                .Include(ac => ac.productCarts)
                 .ToListAsync(cancellationToken);
             return allCart;
         }
@@ -42,6 +43,7 @@ namespace Roqeeb_Project.Implementation.Repository
             var allCart = await _context.AdminCarts
                 .Include(ac => ac.ProductAdminsCart)
                 .ThenInclude(pc => pc.Product)
+                 .Include(ac => ac.productCarts)
                 .Where(expression)
                 .ToListAsync(cancellationToken);
             return allCart;
@@ -53,6 +55,7 @@ namespace Roqeeb_Project.Implementation.Repository
             var cart = await _context.AdminCarts
                 .Include(ac => ac.ProductAdminsCart)
                 .ThenInclude(pc => pc.Product)
+                 .Include(ac => ac.productCarts)
                 .SingleOrDefaultAsync(expression, cancellationToken);
             return cart;
         }
@@ -64,6 +67,7 @@ namespace Roqeeb_Project.Implementation.Repository
             var cart = await _context.AdminCarts
                 .Include(ac => ac.ProductAdminsCart)
                 .ThenInclude(pc => pc.Product)
+                 .Include(ac => ac.productCarts)
                 .SingleOrDefaultAsync(ac => ac.Id == cartId, cancellationToken);
             return cart;
         }

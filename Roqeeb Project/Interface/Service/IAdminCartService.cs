@@ -11,7 +11,10 @@ namespace Roqeeb_Project.Interface.Service
         Task<BaseResponse<AdminCartDTO>> CreateCart(CancellationToken cancellationToken);
         Task<BaseResponse<AdminCartDTO>> GetById(string cartId, CancellationToken cancellationToken);
         Task<BaseResponse<AdminCartDTO>> GetByStatus(CancellationToken cancellationToken);
-        Task<BaseResponse<AdminCartDTO>> AddToCart(string productId, string adminCartId, CancellationToken cancellationToken);
-        Task<BaseResponse<AdminCartDTO>> UpdateCart(string cartId, CancellationToken cancellationToken);    
+        Task<BaseResponse<AdminCartDTO>> AddToCart(AddToCartRequestModel request, string adminCartId, CancellationToken cancellationToken);
+        Task<BaseResponse<AdminCartDTO>> EditUpdateCart(string productId, string cartId, int Quantity, CancellationToken cancellationToken);
+        Task<BaseResponse<AdminCartDTO>> DeleteUpdateCart(string cartId, string productCartName, CancellationToken cancellationToken);
+
+
     }
 }

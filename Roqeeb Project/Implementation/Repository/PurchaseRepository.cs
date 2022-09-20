@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +28,24 @@ namespace Roqeeb_Project.Implementation.Repository
             return purchase;
         }
 
+        public async Task<IList<Purchase>> GetAll(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var purchases = await _context.Purchases
+                .Include(p => p.AdminCart)
+                .ToListAsync(cancellationToken);
+            return purchases;
+        }
 
+        public async Task<IList<Purchase>> GetAllAsync(Expression<Func<Purchase, bool>> expression, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var purchases = await _context.Purchases
+                .Include(p => p.AdminCart)
+                .Where(expression)
+                .ToListAsync(cancellationToken);
+            return purchases;
+        }
 
         public async Task<Purchase> GetAsync(Expression<Func<Purchase, bool>> expression, CancellationToken cancellationToken)
         {
@@ -34,6 +53,16 @@ namespace Roqeeb_Project.Implementation.Repository
             var purchase = await _context.Purchases
                 .Include(p => p.AdminCart)
                 .SingleOrDefaultAsync(expression, cancellationToken);
+            return purchase;
+        }
+
+        public async Task<Purchase> GetByDateAsync(DateTime date, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            date = date.ToUniversalTime();
+            var purchase = await _context.Purchases
+                .Include(p => p.AdminCart)
+                .SingleOrDefaultAsync(p => p.CreatedOn == date, cancellationToken);
             return purchase;
         }
     }

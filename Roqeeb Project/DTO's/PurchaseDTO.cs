@@ -8,7 +8,7 @@
     }
     public class CreatePurchaseRequestModel
     {
-        
+       
         public string CartId { get; set; }
 
     }

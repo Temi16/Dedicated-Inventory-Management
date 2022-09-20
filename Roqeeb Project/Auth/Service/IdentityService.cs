@@ -23,14 +23,14 @@ namespace Roqeeb_Project.Auth.Service
         private readonly IHttpContextAccessor _context;
         private readonly IConfiguration _configuration;
         private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly UserRepository _userRepository;
+       
 
-        public IdentityService(IHttpContextAccessor context, IConfiguration configuration, IPasswordHasher<User> passwordHasher, UserRepository userRepository)
+        public IdentityService(IHttpContextAccessor context, IConfiguration configuration, IPasswordHasher<User> passwordHasher)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            
         }
 
         public string GenerateToken(UserDTO user, IList<string> roles)
@@ -100,37 +100,6 @@ namespace Roqeeb_Project.Auth.Service
             return _passwordHasher.HashPassword(new User(), $"{password}{salt}");
         }
 
-        public async Task<BaseResponse<UserDTO>> Login(LoginRequestModel request, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var user = await _userRepository.FindByEmailAsync(request.Email, cancellationToken);
-            var passWordHash = await _userRepository.GetPasswordHashAsync(user, cancellationToken);
-            List<Role> roles = new List<Role>();
-            foreach(var role in user.UserRoles)
-            {
-                roles.Add(role.Role);
-            }
-            if (user != null && $"{user.Password}{user.Salt}" == passWordHash) return new BaseResponse<UserDTO>
-            {
-                Data = new UserDTO
-                {
-                    Id = user.Id,
-                    UserName = user.Username,
-                    Email = user.Email,
-                    Roles = roles.Select(r => new RoleDTO
-                    {
-                        Id = r.Id,
-                        Name = r.Name
-                    }).ToList()
-                },
-                Message = "Login Successful",
-                Status = true
-            };
-            return new BaseResponse<UserDTO>
-            {
-                Message = "Incorrect Username or Password",
-                Status = false
-            };
-        }
+       
     }
 }
