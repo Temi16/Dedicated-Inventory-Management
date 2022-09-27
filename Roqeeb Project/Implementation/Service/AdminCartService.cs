@@ -79,7 +79,8 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 ProductName = request.ProductName,
                 Quantity = request.ProductQuantity,
-                AdminCartId = cart.Id
+                AdminCartId = cart.Id,
+                CreatedOn = DateTime.UtcNow,
             };
             await _productCartRepository.CreateAsync(productCart, cancellationToken);
             var productCarts = await _productCartRepository.GetProductCartByCartId(cart.Id, cancellationToken);
@@ -133,11 +134,22 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Does not exist",
                 Status = false
             };
+            List<ProductCart> products = new List<ProductCart>();
+            foreach(var product in cart.productCarts)
+            {
+                products.Add(product);
+            }
             return new BaseResponse<AdminCartDTO>
             {
                 Data = new AdminCartDTO
                 {
                     Id = cart.Id,
+                    Products = products.Select(pc => new ProductCartDTO
+                    {
+                        ProductName = pc.ProductName,
+                        Quantity = pc.Quantity
+                    }).ToList(),
+
                 },
                 Message = "Successful",
                 Status = true

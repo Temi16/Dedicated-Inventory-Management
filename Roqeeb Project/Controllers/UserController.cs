@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Roqeeb_Project.Auth.Service;
 using Roqeeb_Project.DTO_s;
 using Roqeeb_Project.Interface.Service;
+using Roqeeb_Project.View_Models.ResponseModels;
 
 namespace Roqeeb_Project.Controllers
 {
@@ -22,7 +23,7 @@ namespace Roqeeb_Project.Controllers
             _userService = userService;
         }
         [HttpPost("Login")]
-        public async Task<IActionResult> UserLogin(LoginRequestModel request, CancellationToken cancellatioToken)
+        public async Task<IActionResult> UserLogin([FromForm]LoginRequestModel request, CancellationToken cancellatioToken)
         {
             cancellatioToken.ThrowIfCancellationRequested();
             var create = await _userService.Login(request, cancellatioToken);
@@ -32,8 +33,15 @@ namespace Roqeeb_Project.Controllers
             {
                 roles.Add(role.Name);
             }
-            _identityService.GenerateToken(create.Data, roles);
-            return Ok(create);
+            var token = _identityService.GenerateToken(create.Data, roles);
+            var loginResponse = new LoginResponseModel
+            {
+                Data = create.Data,
+                Message = "Login successful",
+                Status = true,
+                Token = token
+            };
+            return Ok(loginResponse);
             
         }
     }

@@ -27,6 +27,13 @@ namespace Roqeeb_Project.Controllers
             if (cart.Status == false) return BadRequest(cart.Message);
             return Ok(cart);
         }
+        [HttpGet("GetCart")]
+        public async Task<IActionResult> GetAvailableCart(CancellationToken cancellationToken)
+        {
+            var cart = await _adminCartService.GetByStatus(cancellationToken);
+            if (cart.Status == false) return BadRequest(cart);
+            return Ok(cart);
+        }
         [HttpPost("AddToCart")]
         public async Task<IActionResult> AddToCart([FromForm]AddToCartRequestModel request, CancellationToken cancellationToken)
         {

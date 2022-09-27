@@ -8,6 +8,7 @@ namespace Roqeeb_Project.Entities
         public string ReferenceNo { get; set; }
         public string AdminCartId { get; set; }
         public AdminCart AdminCart { get; set; }
+        public bool IsApproved { get; set; }
         
        
     }

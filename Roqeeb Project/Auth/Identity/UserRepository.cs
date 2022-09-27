@@ -65,11 +65,12 @@ namespace Roqeeb_Project.Implementation.Identity.Repositories
         public async Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            normalizedEmail = normalizedEmail.ToLower();
+            
             if(string.IsNullOrEmpty(normalizedEmail))
             {
                 throw new ArgumentNullException(nameof(normalizedEmail));
             }
+            normalizedEmail = normalizedEmail.ToLower();
             var user = await _context.Users
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
@@ -146,7 +147,7 @@ namespace Roqeeb_Project.Implementation.Identity.Repositories
             var myUser = await FindByEmailAsync(user.Email, cancellationToken);
             if (myUser == null) return "null";
             var salt = myUser.Salt;
-            var passwordHash = $"{user.Password}{salt}";
+            var passwordHash = $"{user.Password}";
             return passwordHash;
 
         }

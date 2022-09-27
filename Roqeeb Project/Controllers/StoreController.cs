@@ -23,5 +23,12 @@ namespace Roqeeb_Project.Controllers
             if (store.Status == false) return BadRequest(store.Message);
             return Ok(store);
         }
+        [HttpGet("AllStores")]
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+        {
+            var stores = await _storeService.GetAllStore(cancellationToken);
+            if (stores.Status == false) return BadRequest(stores.Message);
+            return Ok(stores);
+        }
     }
 }

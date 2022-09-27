@@ -8,10 +8,12 @@ namespace Roqeeb_Project.Context
 {
     public class ApplicationContext : DbContext
     {
-        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
+        private readonly IIdentityService _identityService;
+        
+        public ApplicationContext(DbContextOptions<ApplicationContext> options, IIdentityService identityService) : base(options)
         {
-            
-        }
+            _identityService = identityService;
+;       }
        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,7 +33,7 @@ namespace Roqeeb_Project.Context
                .HasForeignKey<Employee>(d => d.UserId);
             string userId = Guid.NewGuid().ToString();
             string adminId = Guid.NewGuid().ToString();
-            
+            string salt = _identityService.GenerateSalt();
             modelBuilder.Entity<User>().HasData(new User
             {
                 Id = userId,
@@ -39,12 +41,12 @@ namespace Roqeeb_Project.Context
                 LastName = "Temidayo",
                 Email = "raufroqeeb123@gmail.com",
                 Username = "RRT",
-                Password = "temi123",
+                Password = $"temi123{salt}",
                 IsDeleted = false,
-               
+                Salt = salt,
                 IsEmailConfirmed = true
-                
-            }); ;
+
+            }) ; 
             modelBuilder.Entity<Admin>().HasData(new Admin
             {
                 Id = adminId,

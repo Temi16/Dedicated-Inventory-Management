@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Roqeeb_Project.DTO_s;
 using Roqeeb_Project.Entities;
@@ -46,6 +48,28 @@ namespace Roqeeb_Project.Implementation.Service
             };
 
 
+        }
+
+        public async Task<BaseResponse<IList<StoreDTO>>> GetAllStore(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var stores = await _storeRepository.GetAllAsync(cancellationToken);
+            if (stores.Count == 0) return new BaseResponse<IList<StoreDTO>>
+            {
+                Message = "None available",
+                Status = false
+            };
+            return new BaseResponse<IList<StoreDTO>>
+            {
+                Data = stores.Select(st => new StoreDTO
+                {
+                    Id = st.Id,
+                    StoreName = st.StoreName
+                }).ToList(),
+                Message = "Successfull",
+                Status = true
+
+            };
         }
     }
 }

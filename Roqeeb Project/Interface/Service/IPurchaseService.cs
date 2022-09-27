@@ -9,9 +9,11 @@ namespace Roqeeb_Project.Interface.Service
 {
     public interface IPurchaseService
     {
-        Task<BaseResponse<PurchaseDTO>> Create(CreatePurchaseRequestModel request, CancellationToken cancellationToken);
+        Task<BaseResponse<PurchaseDTO>> Create(string cartId, CancellationToken cancellationToken);
         Task<BaseResponse<IList<PurchaseDTO>>> GetAll(CancellationToken cancellationToken);
         Task<BaseResponse<IList<PurchaseDTO>>> GetByDate(DateTime date, CancellationToken cancellationToken);
+        Task<BaseResponse<IList<PendingPurchaseDTO>>> GetNonApprovedPurchase(CancellationToken cancellationToken);
+        Task<BaseResponse<PurchaseDTO>> ApprovePurchase(string purchaseId, CancellationToken cancellationToken);
 
     }
 }

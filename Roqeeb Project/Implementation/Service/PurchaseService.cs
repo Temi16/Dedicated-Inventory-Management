@@ -21,11 +21,35 @@ namespace Roqeeb_Project.Implementation.Service
             _adminCartRepository = adminCartRepository;
         }
 
-        public async Task<BaseResponse<PurchaseDTO>> Create(CreatePurchaseRequestModel request, CancellationToken cancellationToken)
+        public async Task<BaseResponse<PurchaseDTO>> ApprovePurchase(string purchaseId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var purchase = await _purchaseRepository.GetAsync(p => p.AdminCartId == request.CartId, cancellationToken);
-            var cart = await _adminCartRepository.GetById(request.CartId, cancellationToken);
+            if (string.IsNullOrEmpty(purchaseId)) throw new ArgumentNullException(nameof(purchaseId));
+            var purchase = await _purchaseRepository.GetAsync(p => p.Id == purchaseId, cancellationToken);
+            if (purchase == null) return new BaseResponse<PurchaseDTO>
+            {
+                Message = "Not Found",
+                Status = false
+            };
+            purchase.IsApproved = true;
+            await _purchaseRepository.UpdateAsync(purchase, cancellationToken);
+            return new BaseResponse<PurchaseDTO>
+            {
+                Data = new PurchaseDTO
+                {
+                    CartId = purchase.AdminCartId,
+                    Id = purchase.Id,
+                },
+                Message = "Approved Successfully",
+                Status = true
+            };
+        }
+
+        public async Task<BaseResponse<PurchaseDTO>> Create(string cartId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var purchase = await _purchaseRepository.GetAsync(p => p.AdminCartId == cartId, cancellationToken);
+            var cart = await _adminCartRepository.GetById(cartId, cancellationToken);
             if (purchase != null) return new BaseResponse<PurchaseDTO>
             {
                 Message = "Exists",
@@ -39,7 +63,8 @@ namespace Roqeeb_Project.Implementation.Service
             var newPurchase = new Purchase
             {
                 AdminCartId = cart.Id,
-                IsDeleted = false
+                IsDeleted = false,
+                IsApproved = false
             };
             await _purchaseRepository.AddAsync(newPurchase, cancellationToken);
             cart.IsActive = false;
@@ -101,6 +126,37 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Successful",
                 Status = true
             };
+        }
+
+        public async Task<BaseResponse<IList<PendingPurchaseDTO>>> GetNonApprovedPurchase(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var unapprovedPurchase = await _purchaseRepository.GetAllAsync(p => p.IsApproved == false, cancellationToken);
+            if (unapprovedPurchase.Count == 0) return new BaseResponse<IList<PendingPurchaseDTO>>
+            {
+                Message = "No Avaiable Pending Purchase",
+                Status = false,
+            };
+            return new BaseResponse<IList<PendingPurchaseDTO>>
+            {
+                Data = unapprovedPurchase.Select(pp => new PendingPurchaseDTO
+                {
+                    cart = new AdminCartDTO
+                    {
+                        Id = pp.AdminCartId,
+                        Products = pp.AdminCart.productCarts.Select(pc => new ProductCartDTO
+                        {
+                            ProductName = pc.ProductName,
+                            Quantity = pc.Quantity
+                        }).ToList(),
+                        TotalAmount = pp.AdminCart.TotalAmount
+
+                    }
+                }).ToList(),
+                Message = "Successfull",
+                Status = true
+            };
+          
         }
     }
 }

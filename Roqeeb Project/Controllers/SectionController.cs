@@ -19,9 +19,18 @@ namespace Roqeeb_Project.Controllers
         [HttpPost("CreateSection")]
         public async Task<IActionResult> CreateSection([FromForm] CreateSectionRequestModel request, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var section = await _sectionService.CreateSection(request, cancellationToken);
             if (section.Status == false) return BadRequest(section.Message);
             return Ok(section);
+        }
+        [HttpGet("StoreSections/{storeName}")]
+        public async Task<IActionResult> GetAllSectionsByStore([FromRoute]string storeName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var sections = await _sectionService.GetAllByStore(storeName, cancellationToken);
+            if (sections.Status == false) return BadRequest(sections);
+            return Ok(sections);
         }
     }
 }

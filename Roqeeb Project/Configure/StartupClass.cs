@@ -31,11 +31,11 @@ namespace Roqeeb_Project.Configure
         public static IServiceCollection MyScoped(this IServiceCollection services)
         {
             services.AddScoped<IUserStore<User>, UserRepository>();
-         //   services.AddScoped<IUserPasswordStore<User>, UserRepository>();
-            //services.AddScoped<IUserRoleStore<User>, UserRepository>();
-            //services.AddScoped<IUserEmailStore<User>, UserRepository>();
-            //services.AddScoped<IQueryableUserStore<User>, UserRepository>();
-          //  services.AddScoped<IUserPhoneNumberStore<User>, UserRepository>();
+            services.AddScoped<IUserPasswordStore<User>, UserRepository>();
+            services.AddScoped<IUserRoleStore<User>, UserRepository>();
+            services.AddScoped<IUserEmailStore<User>, UserRepository>();
+            services.AddScoped<IQueryableUserStore<User>, UserRepository>();
+            services.AddScoped<IUserPhoneNumberStore<User>, UserRepository>();
             services.AddScoped<IRoleStore<Role>, RoleRepository>();
             //services.AddScoped<IRoleValidator<Role>, RoleRepository>();
             //services.AddScoped<IRoleClaimStore<Role>, RoleRepository>();
@@ -54,6 +54,7 @@ namespace Roqeeb_Project.Configure
             services.AddScoped<IPurchaseRepository, PurchaseRepository>();
             services.AddScoped<IAdminCartRepository, AdminCartRepository>();
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IUserService, UserService>();    
            
             return services;
         }

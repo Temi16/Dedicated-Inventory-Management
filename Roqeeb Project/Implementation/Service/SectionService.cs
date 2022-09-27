@@ -59,15 +59,21 @@ namespace Roqeeb_Project.Implementation.Service
         public async Task<BaseResponse<IList<SectionDTO>>> GetAllByStore(string StoreName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var sections = await _sectionRepository.GetAllByStoreAsync(se => se.Store.StoreName == StoreName, cancellationToken);
-            if (sections == null) return new BaseResponse<IList<SectionDTO>>
+            var store = await _storeRepository.GetByNameAsync(StoreName, cancellationToken);
+            List<Section> mySections = new List<Section>();
+            foreach(var section in store.Sections)
+            {
+                mySections.Add(section);
+            }
+            //var sections = await _sectionRepository.GetAllByStoreAsync(se => se.StoreId == store.Id, cancellationToken);
+            if (mySections.Count == 0) return new BaseResponse<IList<SectionDTO>>
             {
                 Message = "Sections not found",
                 Status = false
             };
             return new BaseResponse<IList<SectionDTO>>
             {
-                Data = sections.Select(se => new SectionDTO
+                Data = mySections.Select(se => new SectionDTO
                 {
                     Id = se.Id,
                     SectionName = se.SectionName,

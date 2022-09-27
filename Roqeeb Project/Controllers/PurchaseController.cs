@@ -15,11 +15,11 @@ namespace Roqeeb_Project.Controllers
         {
             _purchaseService = purchaseService;
         }
-        [HttpPost("CreatePurchase")]
-        public async Task<IActionResult> CreatePurchase([FromForm]CreatePurchaseRequestModel request, CancellationToken cancellationToken)
+        [HttpPost("CreatePurchase/{cartId}")]
+        public async Task<IActionResult> CreatePurchase([FromRoute]string cartId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var purchase = await _purchaseService.Create(request, cancellationToken);
+            var purchase = await _purchaseService.Create(cartId, cancellationToken);
             if (purchase.Status == false) return BadRequest(purchase.Message);
             return Ok(purchase);
         }

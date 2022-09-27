@@ -35,7 +35,7 @@ namespace Roqeeb_Project.Auth.Service
 
         public string GenerateToken(UserDTO user, IList<string> roles)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("JwtTokenSettings : TokenKey")));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("JwtTokenSettings:TokenKey")));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
             var claims = new List<Claim>
             {

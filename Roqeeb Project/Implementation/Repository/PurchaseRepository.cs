@@ -23,8 +23,8 @@ namespace Roqeeb_Project.Implementation.Repository
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (purchase == null) throw new ArgumentNullException(null);
-            await _context.AddAsync(purchase, cancellationToken);
-            await _context.SaveChangesAsync();
+            await _context.Purchases.AddAsync(purchase, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
             return purchase;
         }
 
@@ -63,6 +63,15 @@ namespace Roqeeb_Project.Implementation.Repository
             var purchase = await _context.Purchases
                 .Include(p => p.AdminCart)
                 .SingleOrDefaultAsync(p => p.CreatedOn == date, cancellationToken);
+            return purchase;
+        }
+
+        public async Task<Purchase> UpdateAsync(Purchase purchase, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (purchase == null) throw new ArgumentNullException(null);
+            _context.Purchases.Update(purchase);
+            await _context.SaveChangesAsync(cancellationToken);
             return purchase;
         }
     }

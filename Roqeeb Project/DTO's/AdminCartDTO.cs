@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Roqeeb_Project.Entities;
 
 namespace Roqeeb_Project.DTO_s
@@ -13,6 +14,7 @@ namespace Roqeeb_Project.DTO_s
     {
         public string ProductName { get; set; }
         public int Quantity { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 
 
