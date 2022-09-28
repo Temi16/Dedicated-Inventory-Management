@@ -33,6 +33,7 @@ namespace Roqeeb_Project.Implementation.Repository
             cancellationToken.ThrowIfCancellationRequested();
             var purchases = await _context.Purchases
                 .Include(p => p.AdminCart)
+                .ThenInclude(ac => ac.productCarts)
                 .ToListAsync(cancellationToken);
             return purchases;
         }
@@ -42,6 +43,7 @@ namespace Roqeeb_Project.Implementation.Repository
             cancellationToken.ThrowIfCancellationRequested();
             var purchases = await _context.Purchases
                 .Include(p => p.AdminCart)
+                .ThenInclude(ac => ac.productCarts)
                 .Where(expression)
                 .ToListAsync(cancellationToken);
             return purchases;
@@ -52,6 +54,7 @@ namespace Roqeeb_Project.Implementation.Repository
             cancellationToken.ThrowIfCancellationRequested();
             var purchase = await _context.Purchases
                 .Include(p => p.AdminCart)
+                .ThenInclude(ac => ac.productCarts)
                 .SingleOrDefaultAsync(expression, cancellationToken);
             return purchase;
         }

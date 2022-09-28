@@ -79,11 +79,17 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 ProductName = request.ProductName,
                 Quantity = request.ProductQuantity,
+                Price = request.ProductPrice,
                 AdminCartId = cart.Id,
                 CreatedOn = DateTime.UtcNow,
             };
             await _productCartRepository.CreateAsync(productCart, cancellationToken);
             var productCarts = await _productCartRepository.GetProductCartByCartId(cart.Id, cancellationToken);
+            double totalPrice = 0;
+            foreach(var myPrice in productCarts)
+            {
+                totalPrice += myPrice.Price;
+            }
             return new BaseResponse<AdminCartDTO>
             {
                 Data = new AdminCartDTO
@@ -92,8 +98,10 @@ namespace Roqeeb_Project.Implementation.Service
                     Products = productCarts.Select(pc => new ProductCartDTO
                     {
                         ProductName = pc.ProductName,
-                        Quantity = pc.Quantity
+                        Quantity = pc.Quantity,
+                        Price = pc.Price
                     }).ToList(),
+                    TotalAmount = totalPrice
                 },
                 Message = "Successful",
                 Status = true
@@ -119,6 +127,7 @@ namespace Roqeeb_Project.Implementation.Service
                 Data = new AdminCartDTO
                 {
                     Id = cart.Id,
+                    
 
                 },
                 Message = "Successfull",
@@ -139,6 +148,11 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 products.Add(product);
             }
+            double totalPrice = 0;
+            foreach(var myProduct in products)
+            {
+                totalPrice += myProduct.Price;
+            }
             return new BaseResponse<AdminCartDTO>
             {
                 Data = new AdminCartDTO
@@ -149,6 +163,7 @@ namespace Roqeeb_Project.Implementation.Service
                         ProductName = pc.ProductName,
                         Quantity = pc.Quantity
                     }).ToList(),
+                    TotalAmount = totalPrice
 
                 },
                 Message = "Successful",
@@ -157,7 +172,7 @@ namespace Roqeeb_Project.Implementation.Service
             
         }
 
-        public async Task<BaseResponse<AdminCartDTO>> EditUpdateCart(string cartId, string productCartName, int Quantity, CancellationToken cancellationToken)
+        public async Task<BaseResponse<AdminCartDTO>> EditUpdateCart(string cartId, string productCartName, int Quantity, double price, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (string.IsNullOrEmpty(cartId)) throw new ArgumentNullException(null);
@@ -170,6 +185,7 @@ namespace Roqeeb_Project.Implementation.Service
 
             var productCart = await _productCartRepository.GetAsync(pc => pc.ProductName == productCartName && pc.AdminCartId == cart.Id, cancellationToken);
             productCart.Quantity = Quantity;
+            productCart.Price = price;
             await _productCartRepository.UpdateAsync(productCart, cancellationToken);
             return new BaseResponse<AdminCartDTO>
             {

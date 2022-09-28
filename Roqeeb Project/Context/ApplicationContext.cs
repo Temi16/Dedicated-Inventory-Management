@@ -73,6 +73,7 @@ namespace Roqeeb_Project.Context
             });
 
         }
+        public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<ProductCart> ProductsCarts { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<AdminCart> AdminCarts { get; set; }

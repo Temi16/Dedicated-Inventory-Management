@@ -37,15 +37,27 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 Data = new PurchaseDTO
                 {
-                    CartId = purchase.AdminCartId,
                     Id = purchase.Id,
+                    cart = new AdminCartDTO
+                    {
+                        Id = purchase.AdminCartId,
+                        Products = purchase.AdminCart.productCarts.Select(pr => new ProductCartDTO
+                        {
+
+                            ProductName = pr.ProductName,
+                            Quantity = pr.Quantity
+                        }).ToList(),
+                        TotalAmount = purchase.AdminCart.TotalAmount
+                    },
+                    SupplierName = purchase.Supplier.SupplierName,
+                    ReferenceNo = purchase.ReferenceNo                    
                 },
                 Message = "Approved Successfully",
                 Status = true
             };
         }
 
-        public async Task<BaseResponse<PurchaseDTO>> Create(string cartId, CancellationToken cancellationToken)
+        public async Task<BaseResponse<PurchaseDTO>> Create(string cartId, string supplierId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var purchase = await _purchaseRepository.GetAsync(p => p.AdminCartId == cartId, cancellationToken);
@@ -64,7 +76,12 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 AdminCartId = cart.Id,
                 IsDeleted = false,
-                IsApproved = false
+                IsApproved = false,
+                SupplierId = supplierId,
+                ReferenceNo = $"RC-{Guid.NewGuid().ToString().Replace("-", "").ToUpper().Substring(0, 5)}",
+                CreatedOn = DateTime.UtcNow
+
+
             };
             await _purchaseRepository.AddAsync(newPurchase, cancellationToken);
             cart.IsActive = false;
@@ -74,8 +91,19 @@ namespace Roqeeb_Project.Implementation.Service
                 Data = new PurchaseDTO
                 {
                     Id = newPurchase.Id,
-                    CartId = cart.Id,
-                    
+                    cart = new AdminCartDTO
+                    {
+                        Id = newPurchase.AdminCartId,
+                        Products = newPurchase.AdminCart.productCarts.Select(pr => new ProductCartDTO
+                        {
+
+                            ProductName = pr.ProductName,
+                            Quantity = pr.Quantity
+                        }).ToList(),
+                        TotalAmount = newPurchase.AdminCart.TotalAmount,
+                    },
+                    SupplierName = newPurchase.Supplier.SupplierName,
+                    ReferenceNo = newPurchase.ReferenceNo
                 },
                 Message = "Successful",
                 Status = true
@@ -97,7 +125,19 @@ namespace Roqeeb_Project.Implementation.Service
                 Data = purchases.Select(p => new PurchaseDTO
                 {
                     Id = p.Id,
-                    CartId = p.Id
+                    cart = new AdminCartDTO
+                    {
+                        Id = p.AdminCartId,
+                        Products = p.AdminCart.productCarts.Select(pr => new ProductCartDTO
+                        {
+                           
+                            ProductName = pr.ProductName,
+                            Quantity = pr.Quantity
+                        }).ToList(),
+                        TotalAmount = p.AdminCart.TotalAmount,
+                    },
+                    SupplierName = p.Supplier.SupplierName,
+                    ReferenceNo = p.ReferenceNo
 
                 }).ToList(),
                 Message = "Successful",
@@ -120,7 +160,19 @@ namespace Roqeeb_Project.Implementation.Service
                 Data = purchases.Select(p => new PurchaseDTO
                 {
                     Id = p.Id,
-                    CartId = p.Id
+                    cart = new AdminCartDTO
+                    {
+                        Id = p.AdminCartId,
+                        Products = p.AdminCart.productCarts.Select(pr => new ProductCartDTO
+                        {
+
+                            ProductName = pr.ProductName,
+                            Quantity = pr.Quantity
+                        }).ToList(),
+                        TotalAmount = p.AdminCart.TotalAmount
+                    },
+                    SupplierName = p.Supplier.SupplierName,
+                    ReferenceNo = p.ReferenceNo
 
                 }).ToList(),
                 Message = "Successful",
@@ -151,7 +203,11 @@ namespace Roqeeb_Project.Implementation.Service
                         }).ToList(),
                         TotalAmount = pp.AdminCart.TotalAmount
 
-                    }
+                    },
+                    SupplierName = pp.Supplier.SupplierName,
+                    ReferenceNo = pp.ReferenceNo,
+                    DateCreated = pp.CreatedOn.ToString()
+                    
                 }).ToList(),
                 Message = "Successfull",
                 Status = true

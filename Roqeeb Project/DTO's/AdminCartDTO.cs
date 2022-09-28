@@ -14,6 +14,7 @@ namespace Roqeeb_Project.DTO_s
     {
         public string ProductName { get; set; }
         public int Quantity { get; set; }
+        public double Price { get; set; }
         public DateTime CreatedOn { get; set; }
     }
 
@@ -22,6 +23,7 @@ namespace Roqeeb_Project.DTO_s
     {
         public string ProductName { get; set; }
         public int ProductQuantity { get; set; }
+        public double ProductPrice { get; set; }
        
         
     }

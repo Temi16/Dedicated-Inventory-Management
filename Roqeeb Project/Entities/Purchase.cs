@@ -9,6 +9,8 @@ namespace Roqeeb_Project.Entities
         public string AdminCartId { get; set; }
         public AdminCart AdminCart { get; set; }
         public bool IsApproved { get; set; }
+        public string SupplierId { get; set; }
+        public Supplier Supplier { get; set; }
         
        
     }
