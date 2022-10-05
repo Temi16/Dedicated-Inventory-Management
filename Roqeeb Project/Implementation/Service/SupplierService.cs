@@ -31,26 +31,14 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 SupplierName = request.SupplierName,
             };
-            await _supplierRepository.CreateAsync(supplier, cancellationToken);
+            await _supplierRepository.CreateAsync(mySupplier, cancellationToken);
             return new BaseResponse<SupplierDTO>
             {
                 Data = new SupplierDTO
                 {
                     Id = mySupplier.Id,
                     SupplierName = mySupplier.SupplierName,
-                    Purchases = mySupplier.Purchases.Select(p => new PurchaseDTO
-                    {
-                        Id = p.Id,
-                        cart = new AdminCartDTO
-                        {
-                            Id = p.AdminCartId,
-                            Products = p.AdminCart.productCarts.Select(pr => new ProductCartDTO
-                            {
-                                ProductName = pr.ProductName,
-                                Quantity = pr.Quantity
-                            }).ToList(),
-                        }
-                    }).ToList()
+                    Purchases = null
 
                 },
                 Message = "Successfully Created",

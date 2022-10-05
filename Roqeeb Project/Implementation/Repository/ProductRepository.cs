@@ -54,6 +54,7 @@ namespace Roqeeb_Project.Implementation.Repository
                 .ThenInclude(ps => ps.Sales)
                  .Include(p => p.productSections)
                 .ThenInclude(ps => ps.Section)
+                .ThenInclude(se => se.Store)
                 .SingleOrDefaultAsync(p => p.Id == productId && p.IsDeleted == false, cancellationToken);
             return newProduct;
         }
@@ -61,6 +62,7 @@ namespace Roqeeb_Project.Implementation.Repository
         public async Task<Product> GetProductByNameAsync(string productName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            productName = productName.ToLower();
             if (productName == null) throw new ArgumentNullException(null);
             var newProduct = await _context.Products
                 .Include(p => p.ProductPurchase)
@@ -69,7 +71,8 @@ namespace Roqeeb_Project.Implementation.Repository
                 .ThenInclude(ps => ps.Sales)
                 .Include(p => p.productSections)
                 .ThenInclude(ps => ps.Section)
-                .SingleOrDefaultAsync(p => p.ProductName == productName && p.IsDeleted == false, cancellationToken);
+                .ThenInclude(se => se.Store)
+                .SingleOrDefaultAsync(p => p.ProductName.ToLower() == productName && p.IsDeleted == false, cancellationToken);
             return newProduct;
         }
 
@@ -93,6 +96,7 @@ namespace Roqeeb_Project.Implementation.Repository
                 .ThenInclude(ps => ps.Sales)
                 .Include(p => p.productSections)
                 .ThenInclude(ps => ps.Section)
+                .ThenInclude(se => se.Store)
                 .Where(p => p.IsDeleted == false)
                 .ToListAsync(cancellationToken);
             return products;
@@ -115,6 +119,12 @@ namespace Roqeeb_Project.Implementation.Repository
             await _context.SaveChangesAsync(cancellationToken);
             return productSection;
 
+        }
+        public async Task<IList<string>> GetAllProductNames(CancellationToken cancellationToken)
+        {
+            var products = await _context.Products.ToListAsync(cancellationToken);
+            var productNames = products.Select(p => p.ProductName).ToList();
+            return productNames;
         }
 
       

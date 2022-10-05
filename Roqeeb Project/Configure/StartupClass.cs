@@ -54,8 +54,16 @@ namespace Roqeeb_Project.Configure
             services.AddScoped<IPurchaseRepository, PurchaseRepository>();
             services.AddScoped<IAdminCartRepository, AdminCartRepository>();
             services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<IUserService, UserService>();    
-           
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ISalesService, SalesService>();
+            services.AddScoped<ISalesRepository, SalesRepository>();
+            services.AddScoped<ISalesCartRepository, SalesCartRepository>();
+            services.AddScoped<ISalesCartService, SalesCartService>();
+            services.AddScoped<IProductSalesCartRepository, ProductSalesCartRepository>();
+            services.AddScoped<ISupplierRepository, SupplierRepository>();
+            services.AddScoped<ISupplierService, SupplierService>();
+
+
             return services;
         }
     }

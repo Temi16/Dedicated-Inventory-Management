@@ -57,24 +57,27 @@ namespace Roqeeb_Project.Implementation.Service
         {
             cancellationToken.ThrowIfCancellationRequested();
             var product = await _productRepository.GetProductByNameAsync(request.ProductName, cancellationToken);
-            
+           
             var cart = await _adminCartRepository.GetAsync(ac => ac.Id == adminCartId, cancellationToken);
-            
-            List<string> products = new List<string>();
-            foreach (var item in cart.productCarts)
+            if(product != null)
             {
-                products.Add(item.ProductName);
-                
-            }
-            if (products.Contains(product.ProductName))
-            {
-                return new BaseResponse<AdminCartDTO>
+                List<string> products = new List<string>();
+                foreach (var item in cart.productCarts)
                 {
-                    Message = "Product exists in cart",
-                    Status = false
-                };
+                    products.Add(item.ProductName.ToLower());
+
+                }
+                if (products.Contains(product.ProductName.ToLower()))
+                {
+                    return new BaseResponse<AdminCartDTO>
+                    {
+                        Message = "Product exists in cart",
+                        Status = false
+                    };
+                }
+                await _adminCartRepository.AddProductToCart(product.Id, adminCartId, cancellationToken);
             }
-            await _adminCartRepository.AddProductToCart(product.Id, adminCartId, cancellationToken);
+           
             var productCart = new ProductCart
             {
                 ProductName = request.ProductName,
@@ -212,8 +215,23 @@ namespace Roqeeb_Project.Implementation.Service
 
                 Message = "Successfully Updated",
                 Status = true
-
             };
+        }
+
+        public async Task<BaseResponse<bool>> CheckProductExistBeforeAddingToCart(string productName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var product = await _productRepository.GetProductByNameAsync(productName, cancellationToken);
+            if (product == null) return new BaseResponse<bool>
+            {
+                Status = false
+            };
+            return new BaseResponse<bool>
+            {
+                Status = true
+            };
+
+            
         }
     }
 }

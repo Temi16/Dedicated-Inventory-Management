@@ -48,6 +48,7 @@ namespace Roqeeb_Project.Implementation.Service
                 Data = new SectionDTO
                 {
                     Id = newSection.Id,
+                    StoreName = newSection.Store.StoreName,
                     SectionName = newSection.SectionName,
                     SectionDescription = newSection.SectionDescription
                 },

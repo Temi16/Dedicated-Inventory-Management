@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Roqeeb_Project.Auth.Service;
 using Roqeeb_Project.DTO_s;
 using Roqeeb_Project.Entities;
 using Roqeeb_Project.Interface.Repository;
@@ -15,10 +16,14 @@ namespace Roqeeb_Project.Implementation.Service
     {
         private readonly IPurchaseRepository _purchaseRepository;
         private readonly IAdminCartRepository _adminCartRepository;
-        public PurchaseService(IPurchaseRepository purchaseRepository, IAdminCartRepository adminCartRepository)
+        private readonly IProductRepository _productRepository;
+        private readonly IIdentityService _identityService;
+        public PurchaseService(IPurchaseRepository purchaseRepository, IAdminCartRepository adminCartRepository, IProductRepository productRepository, IIdentityService identityService)
         {
             _purchaseRepository = purchaseRepository;
             _adminCartRepository = adminCartRepository;
+            _productRepository = productRepository;
+            _identityService = identityService;
         }
 
         public async Task<BaseResponse<PurchaseDTO>> ApprovePurchase(string purchaseId, CancellationToken cancellationToken)
@@ -32,6 +37,33 @@ namespace Roqeeb_Project.Implementation.Service
                 Status = false
             };
             purchase.IsApproved = true;
+            foreach (var product in purchase.AdminCart.productCarts)
+            {
+                var realProduct = await _productRepository.GetProductByNameAsync(product.ProductName, cancellationToken);
+                if(realProduct != null)
+                {
+                    realProduct.Quantity = product.Quantity + realProduct.Quantity;
+                    realProduct.CostPrice = product.Price;
+                    await _productRepository.UpdateProduct(realProduct, cancellationToken);
+                }
+                else
+                {
+                    var newProduct = new Product
+                    {
+                        ProductName = product.ProductName,
+                        ProductDescription = "",
+                        CostPrice = product.Price,
+                        SellingPrice = 0,
+                        Quantity = product.Quantity,
+                        CreatedBy = _identityService.GetUserIdentity(),
+                        CreatedOn = DateTime.UtcNow,
+                        IsAvalaible = true,
+                        IsDeleted = false,
+                    };
+                    await _productRepository.CreateProductAsync(newProduct, cancellationToken);
+                }
+              
+            }
             await _purchaseRepository.UpdateAsync(purchase, cancellationToken);
             return new BaseResponse<PurchaseDTO>
             {
@@ -49,8 +81,8 @@ namespace Roqeeb_Project.Implementation.Service
                         }).ToList(),
                         TotalAmount = purchase.AdminCart.TotalAmount
                     },
-                    SupplierName = purchase.Supplier.SupplierName,
-                    ReferenceNo = purchase.ReferenceNo                    
+                    //SupplierName = purchase.Supplier.SupplierName,
+                    ReferenceNo = purchase.ReferenceNo
                 },
                 Message = "Approved Successfully",
                 Status = true
@@ -102,7 +134,7 @@ namespace Roqeeb_Project.Implementation.Service
                         }).ToList(),
                         TotalAmount = newPurchase.AdminCart.TotalAmount,
                     },
-                    SupplierName = newPurchase.Supplier.SupplierName,
+                    //SupplierName = newPurchase.Supplier.SupplierName,
                     ReferenceNo = newPurchase.ReferenceNo
                 },
                 Message = "Successful",
@@ -193,6 +225,7 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 Data = unapprovedPurchase.Select(pp => new PendingPurchaseDTO
                 {
+                    Id = pp.Id,
                     cart = new AdminCartDTO
                     {
                         Id = pp.AdminCartId,
@@ -204,7 +237,7 @@ namespace Roqeeb_Project.Implementation.Service
                         TotalAmount = pp.AdminCart.TotalAmount
 
                     },
-                    SupplierName = pp.Supplier.SupplierName,
+                   // SupplierName = pp.Supplier.SupplierName,
                     ReferenceNo = pp.ReferenceNo,
                     DateCreated = pp.CreatedOn.ToString()
                     

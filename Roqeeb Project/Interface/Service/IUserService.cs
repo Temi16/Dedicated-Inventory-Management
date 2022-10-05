@@ -8,5 +8,6 @@ namespace Roqeeb_Project.Interface.Service
     public interface IUserService
     {
         Task<BaseResponse<UserDTO>> Login(LoginRequestModel request, CancellationToken cancellationToken);
+        Task<BaseResponse<UserDTO>> ChangePassword(string email, ChangePasswordRequestModel request, CancellationToken cancellationToken);
     }
 }

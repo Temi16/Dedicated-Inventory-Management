@@ -9,6 +9,7 @@
     }
     public class PendingPurchaseDTO
     {
+        public string Id { get; set; }
         public AdminCartDTO cart { get; set; }
         public string ReferenceNo { get; set; }
         public string SupplierName { get; set; }

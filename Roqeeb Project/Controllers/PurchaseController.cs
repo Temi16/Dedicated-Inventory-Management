@@ -15,7 +15,7 @@ namespace Roqeeb_Project.Controllers
         {
             _purchaseService = purchaseService;
         }
-        [HttpPost("CreatePurchase/{cartId}")]
+        [HttpPost("CreatePurchase/{cartId}/{supplierId}")]
         public async Task<IActionResult> CreatePurchase([FromRoute]string cartId, [FromRoute]string supplierId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -30,6 +30,14 @@ namespace Roqeeb_Project.Controllers
             var purchases = await _purchaseService.GetNonApprovedPurchase(cancellationToken);
             if (purchases.Status == false) return BadRequest(purchases.Message);
             return Ok(purchases);
+        }
+        [HttpPost("ApprovePurchase/{purchaseId}")]
+        public async Task<IActionResult> ApprovePurchase([FromRoute]string purchaseId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var purchase = await _purchaseService.ApprovePurchase(purchaseId, cancellationToken);
+            if (purchase.Status == false) return BadRequest(purchase);
+            return Ok(purchase);
         }
     }
 }

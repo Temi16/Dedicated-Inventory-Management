@@ -1,4 +1,6 @@
-﻿namespace Roqeeb_Project.DTO_s
+﻿using System.Collections.Generic;
+
+namespace Roqeeb_Project.DTO_s
 {
     public class ProductDTO
     {
@@ -8,5 +10,6 @@
         public int Quantity { get; set; }
         public double CostPrice { get; set; }
         public double SellingPrice { get; set; }
+        public IList<SectionDTO> SectionName { get; set; }
     }
 }

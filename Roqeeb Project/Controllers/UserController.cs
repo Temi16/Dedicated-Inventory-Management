@@ -44,5 +44,13 @@ namespace Roqeeb_Project.Controllers
             return Ok(loginResponse);
             
         }
+        [HttpPost("ChangePassword/{email}")]
+        public async Task<IActionResult> ChangePassword([FromRoute] string email, [FromForm] ChangePasswordRequestModel request, CancellationToken cancellatioToken)
+        {
+            cancellatioToken.ThrowIfCancellationRequested();
+            var changePassword = await _userService.ChangePassword(email, request, cancellatioToken);
+            if (changePassword.Status == false) return BadRequest(changePassword);
+            return Ok(changePassword);
+        }
     }
 }

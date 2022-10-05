@@ -64,7 +64,16 @@ namespace Roqeeb_Project.Implementation.Service
                 Data = stores.Select(st => new StoreDTO
                 {
                     Id = st.Id,
-                    StoreName = st.StoreName
+                    StoreName = st.StoreName,
+                    StoreDescription = st.StoreDescription,
+                    Sections = st.Sections.Select(se => new SectionDTO
+                    {
+                        Id = se.Id,
+                        StoreName = se.Store.StoreName,
+                        SectionName = se.SectionName,
+                        SectionDescription = se.SectionDescription
+                    }).ToList(),
+
                 }).ToList(),
                 Message = "Successfull",
                 Status = true

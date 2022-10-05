@@ -45,6 +45,11 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Section Name does not exists",
                 Status = false
             };
+            List<Section> sections = new List<Section>();
+            foreach (var productSections in product.productSections)
+            {
+                sections.Add(productSections.Section);
+            }
             var newProduct = new Product
             {
                 ProductName = request.ProductName,
@@ -55,7 +60,8 @@ namespace Roqeeb_Project.Implementation.Service
                 CreatedBy = _identityService.GetUserIdentity(),
                 CreatedOn = DateTime.UtcNow,
                 IsAvalaible = request.IsAvalaible,
-                IsDeleted = false
+                IsDeleted = false,
+                
             };
             await _productRepository.CreateProductAsync(newProduct, cancellationToken);
             await _productRepository.AddToSection(newProduct, section.SectionName, cancellationToken);
@@ -68,7 +74,13 @@ namespace Roqeeb_Project.Implementation.Service
                     Quantity = newProduct.Quantity,
                     CostPrice = newProduct.CostPrice,
                     SellingPrice = newProduct.SellingPrice,
-                    Description = newProduct.ProductDescription
+                    Description = newProduct.ProductDescription,
+                    SectionName = sections.Select(se => new SectionDTO
+                    {
+                        Id = se.Id,
+                        StoreName = se.Store.StoreName,
+                        SectionName = se.SectionName
+                    }).ToList(),
                 },
                 Message = "Successfully Creaated",
                 Status = true
@@ -89,7 +101,8 @@ namespace Roqeeb_Project.Implementation.Service
                     ProductName = product.ProductName,
                     Quantity = product.Quantity,
                     CostPrice = product.CostPrice,
-                    SellingPrice = product.SellingPrice
+                    SellingPrice = product.SellingPrice,
+                   
                 },
                 Message = "Deleted Successfully",
                 Status = true
@@ -106,15 +119,27 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Product not found",
                 Status = false
             };
+            List<Section> sections = new List<Section>();
+            foreach(var productSections in product.productSections)
+            {
+                sections.Add(productSections.Section);
+            }
             return new BaseResponse<ProductDTO>
             {
                 Data = new ProductDTO
                 {
                     Id = product.Id,
                     ProductName = product.ProductName,
+                    Description = product.ProductDescription,
                     Quantity = product.Quantity,
                     CostPrice = product.CostPrice,
-                    SellingPrice = product.SellingPrice
+                    SellingPrice = product.SellingPrice,
+                    SectionName = sections.Select(se => new SectionDTO
+                    {
+                        Id = se.Id,
+                        StoreName = se.Store.StoreName,
+                        SectionName = se.SectionName
+                    }).ToList(),
                 },
                 Message = "Product Found",
                 Status = true
@@ -133,6 +158,11 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Product not found",
                 Status = false
             };
+            List<Section> sections = new List<Section>();
+            foreach (var productSections in product.productSections)
+            {
+                sections.Add(productSections.Section);
+            }
             return new BaseResponse<ProductDTO>
             {
                 Data = new ProductDTO
@@ -140,8 +170,15 @@ namespace Roqeeb_Project.Implementation.Service
                     Id = product.Id,
                     ProductName = product.ProductName,
                     Quantity = product.Quantity,
+                    Description = product.ProductDescription,
                     CostPrice = product.CostPrice,
-                    SellingPrice = product.SellingPrice
+                    SellingPrice = product.SellingPrice,
+                    SectionName = sections.Select(se => new SectionDTO
+                    {
+                        Id = se.Id,
+                        StoreName = se.Store.StoreName,
+                        SectionName = se.SectionName
+                    }).ToList(),
                 },
                 Message = "Product Found",
                 Status = true
@@ -221,6 +258,8 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "No products available",
                 Status = false
             };
+           
+            
             return new BaseResponse<IEnumerable<ProductDTO>>
             {
                 Data = products.Select(p => new ProductDTO
@@ -230,7 +269,13 @@ namespace Roqeeb_Project.Implementation.Service
                     ProductName = p.ProductName,
                     CostPrice = p.CostPrice,
                     Quantity = p.Quantity,
-                    SellingPrice = p.SellingPrice
+                    SellingPrice = p.SellingPrice,
+                    SectionName = p.productSections.Select(ps => new SectionDTO 
+                    {
+                        Id = ps.SectionId,
+                        StoreName = ps.Section.Store.StoreName,
+                        SectionName = ps.Section.SectionName
+                    }).ToList(),
                 }).ToList(),
                 Message = "Successfull",
                 Status = true

@@ -41,7 +41,7 @@ namespace Roqeeb_Project.Implementation.Repository
             cancellationToken.ThrowIfCancellationRequested();
             var supplier = await _context.Suppliers
                 .Include(s => s.Purchases)
-                .SingleAsync(expression, cancellationToken);
+                .SingleOrDefaultAsync(expression, cancellationToken);
             return supplier;
         }
 
