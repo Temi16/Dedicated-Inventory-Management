@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Roqeeb_Project.DTO_s;
+using Roqeeb_Project.Entities;
 using Roqeeb_Project.View_Models.RequestModels;
 using Roqeeb_Project.View_Models.RequestModels.ProductRequestMosels;
 using Roqeeb_Project.View_Models.ResponseModels;
@@ -17,6 +18,6 @@ namespace Roqeeb_Project.Interface.Service
         Task<BaseResponse<IEnumerable<ProductDTO>>> ViewAllProducts(CancellationToken cancellationToken);
         Task<BaseResponse<TrackDTO>> TrackProduct(string productName, CancellationToken cancellationToken);
         Task<BaseResponse<ProductDTO>> DeleteProduct(string productName, CancellationToken cancellationToken);
-
+        Task<IList<Product>> AllProducts(CancellationToken cancellationToken);
     }
 }

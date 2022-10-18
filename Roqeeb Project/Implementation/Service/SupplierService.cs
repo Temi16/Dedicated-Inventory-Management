@@ -67,15 +67,15 @@ namespace Roqeeb_Project.Implementation.Service
                     Purchases = s.Purchases.Select(p => new PurchaseDTO
                     {
                         Id = p.Id,
-                        cart = new AdminCartDTO
-                        {
-                            Id = p.AdminCartId,
-                            Products = p.AdminCart.productCarts.Select(pr => new ProductCartDTO
-                            {
-                                ProductName = pr.ProductName,
-                                Quantity = pr.Quantity
-                            }).ToList(),
-                        }
+                        //cart = new AdminCartDTO
+                        //{
+                        //    Id = p.AdminCartId,
+                        //    Products = p.AdminCart.productCarts.Select(pr => new ProductCartDTO
+                        //    {
+                        //        ProductName = pr.ProductName,
+                        //        Quantity = pr.Quantity
+                        //    }).ToList(),
+                        //}
                     }).ToList()
 
                 }).ToList(),

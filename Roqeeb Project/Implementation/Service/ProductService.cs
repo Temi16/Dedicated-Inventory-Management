@@ -28,6 +28,13 @@ namespace Roqeeb_Project.Implementation.Service
             _identityService = identityService;
         }
 
+        public async Task<IList<Product>> AllProducts(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var products = await _productRepository.ViewProductsAsync(cancellationToken);
+            return products;
+        }
+
         public async Task<BaseResponse<ProductDTO>> CreateProduct(CreateProductRequestModel request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Roqeeb_Project.Context;
 
 namespace Roqeeb_Project.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20221014201824_sales")]
+    partial class sales
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,13 +70,13 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "69a69f0f-89ec-4290-9e4d-79a16908bf21",
+                            Id = "a8a858eb-63ae-41f8-b166-77d76417a871",
                             Age = 20,
                             Email = "raufroqeeb123@gmail.com",
                             FirstName = "Roqeeb",
                             IsDeleted = false,
                             LastName = "Temidayo",
-                            UserId = "4e7cd7e6-2e6c-45b3-8386-a855e5086e8a"
+                            UserId = "d5018885-d210-4ce3-9b47-187039f6f3cf"
                         });
                 });
 
@@ -697,14 +699,8 @@ namespace Roqeeb_Project.Migrations
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("Month")
-                        .HasColumnType("text");
-
                     b.Property<double>("TotalAmount")
                         .HasColumnType("double");
-
-                    b.Property<DateTime>("Week")
-                        .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
@@ -863,7 +859,7 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ee5348b5-4cbd-4857-a9b4-370f458bfead",
+                            Id = "1cf9d548-4505-4050-b9f7-93029b5014ea",
                             IsDeleted = false,
                             Name = "Admin"
                         });
@@ -923,14 +919,14 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4e7cd7e6-2e6c-45b3-8386-a855e5086e8a",
+                            Id = "d5018885-d210-4ce3-9b47-187039f6f3cf",
                             Email = "raufroqeeb123@gmail.com",
                             FirstName = "Roqeeb",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
                             LastName = "Temidayo",
-                            Password = "temi123idbm1OQckwHMBw==",
-                            Salt = "idbm1OQckwHMBw==",
+                            Password = "temi123hNieRSCFTjdIXw==",
+                            Salt = "hNieRSCFTjdIXw==",
                             Username = "RRT"
                         });
                 });
@@ -978,10 +974,10 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a6873fff-18f0-4e8f-870f-dbe9ac638f49",
+                            Id = "3cf030a3-7d55-4a90-85fa-ae67c0d947ac",
                             IsDeleted = false,
-                            RoleId = "ee5348b5-4cbd-4857-a9b4-370f458bfead",
-                            UserId = "4e7cd7e6-2e6c-45b3-8386-a855e5086e8a"
+                            RoleId = "1cf9d548-4505-4050-b9f7-93029b5014ea",
+                            UserId = "d5018885-d210-4ce3-9b47-187039f6f3cf"
                         });
                 });
 

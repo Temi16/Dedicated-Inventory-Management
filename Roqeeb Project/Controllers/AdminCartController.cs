@@ -51,15 +51,15 @@ namespace Roqeeb_Project.Controllers
             return Ok(addToCart);
 
         }
-        [HttpPut("UpdateCart")]
-        public async Task<IActionResult> EditAdminCart(string cartId, string productCartName, int Quantity, double price, CancellationToken cancellationToken)
+        [HttpPut("UpdateCart/{cartId}/{productCartName}/{Quantity}/{price}")]
+        public async Task<IActionResult> EditAdminCart([FromRoute]string cartId, [FromRoute]string productCartName, [FromRoute]int Quantity, [FromRoute]double price, CancellationToken cancellationToken)
         {
             var updateCart = await _adminCartService.EditUpdateCart(cartId,  productCartName, Quantity, price, cancellationToken);
             if (updateCart.Status == false) return BadRequest(updateCart);
             return Ok(updateCart);
         }
-        [HttpDelete("DeleteProductCart")]
-        public async Task<IActionResult> DeleteProductInAdminCart(string cartId, string productCartName, CancellationToken cancellationToken)
+        [HttpDelete("DeleteProductCart/{cartId}/{productCartName}")]
+        public async Task<IActionResult> DeleteProductInAdminCart([FromRoute]string cartId, [FromRoute]string productCartName, CancellationToken cancellationToken)
         {
             var deleteProductCart = await _adminCartService.DeleteUpdateCart(cartId, productCartName, cancellationToken);
             if (deleteProductCart.Status == false) return BadRequest(deleteProductCart);
@@ -69,7 +69,7 @@ namespace Roqeeb_Project.Controllers
         public async Task<IActionResult> CheckProductExist([FromRoute]string productName, CancellationToken cancellationToken)
         {
             var checkProductCart = await _adminCartService.CheckProductExistBeforeAddingToCart(productName, cancellationToken);
-            if (checkProductCart.Status == false) return BadRequest(checkProductCart);
+            if (checkProductCart.Status == false) return Ok(checkProductCart);
             return Ok(checkProductCart);
         }
 

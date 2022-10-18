@@ -29,7 +29,7 @@ namespace Roqeeb_Project.Implementation.Service
             cancellationToken.ThrowIfCancellationRequested();
             Dictionary<string, int> products = new Dictionary<string, int>();
             var date = DateTime.Now;
-
+            List<ProductAndQuantity> proAndQuo = new List<ProductAndQuantity>();
             var productNames = await _productRepository.GetAllProductNames(cancellationToken);
             double totalCostPrice = 0;
             foreach (var productName in productNames)
@@ -43,16 +43,21 @@ namespace Roqeeb_Project.Implementation.Service
                     {
                         totalQuantity += productCart.ProductQuantity;
                         name = productCart.ProductName;
-                        var product = await _productRepository.GetProductByNameAsync(productName, cancellationToken);
-                        totalCostPrice += product.CostPrice * totalQuantity;
+                      
                     }
-                    products.Add(name, totalQuantity);
+                    var product = await _productRepository.GetProductByNameAsync(productName, cancellationToken);
+                    totalCostPrice += product.CostPrice * totalQuantity;
+                    proAndQuo.Add(new ProductAndQuantity
+                    {
+                        ProductName = name,
+                        Quantity = totalQuantity
+                    });
 
-                   
+
                 }
 
             }
-            var salesCart = await _salesCartRepository.GetAllCartAsync(cancellationToken);
+            var salesCart = await _salesCartRepository.GetAllAsync(sc => sc.Week > date, cancellationToken);
             double totalSellingPrice = 0;
             foreach (var cart in salesCart)
             {
@@ -63,7 +68,11 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 Data = new ViewSalesDTO
                 {
-                    Products = products,
+                    Products = proAndQuo.Select(pq => new ProductAndQuantity
+                    {
+                        ProductName = pq.ProductName,
+                        Quantity = pq.Quantity
+                    }).ToList(),
                     TotalSellingPrice = totalSellingPrice,
                     TotalCostPrice = totalCostPrice,
                     Profit = totalCostPrice - totalSellingPrice
@@ -78,7 +87,7 @@ namespace Roqeeb_Project.Implementation.Service
             cancellationToken.ThrowIfCancellationRequested();
             Dictionary<string, int> products = new Dictionary<string, int>();
             var month = DateTime.Now.ToString("MM");
-           
+            List<ProductAndQuantity> proAndQuo = new List<ProductAndQuantity>();
             var productNames = await _productRepository.GetAllProductNames(cancellationToken);
             double totalCostPrice = 0;
             foreach (var productName in productNames)
@@ -92,16 +101,21 @@ namespace Roqeeb_Project.Implementation.Service
                     {
                         totalQuantity += productCart.ProductQuantity;
                         name = productCart.ProductName;
-                        var product = await _productRepository.GetProductByNameAsync(productName, cancellationToken);
-                        totalCostPrice += product.CostPrice * totalQuantity;
+                       
                     }
-                    products.Add(name, totalQuantity);
+                    var product = await _productRepository.GetProductByNameAsync(productName, cancellationToken);
+                    totalCostPrice += product.CostPrice * totalQuantity;
+                    proAndQuo.Add(new ProductAndQuantity
+                    {
+                        ProductName = name,
+                        Quantity = totalQuantity
+                    });
 
-                    
+
                 }
 
             }
-            var salesCart = await _salesCartRepository.GetAllCartAsync(cancellationToken);
+            var salesCart = await _salesCartRepository.GetAllAsync(sc => sc.Month == month, cancellationToken);
             double totalSellingPrice = 0;
             foreach (var cart in salesCart)
             {
@@ -112,7 +126,11 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 Data = new ViewSalesDTO
                 {
-                    Products = products,
+                    Products = proAndQuo.Select(pq => new ProductAndQuantity
+                    {
+                        ProductName = pq.ProductName,
+                        Quantity = pq.Quantity
+                    }).ToList(),
                     TotalSellingPrice = totalSellingPrice,
                     TotalCostPrice = totalCostPrice,
                     Profit = totalCostPrice - totalSellingPrice
@@ -126,8 +144,8 @@ namespace Roqeeb_Project.Implementation.Service
         {
             cancellationToken.ThrowIfCancellationRequested();
             Dictionary<string, int> products = new Dictionary<string, int>();
-            //var getAllSales = await _productSalesCartRepository.GetAll(cancellationToken);
             var date = DateTime.Today.ToString("dd:MM:yy");
+            List<ProductAndQuantity> proAndQuo = new List<ProductAndQuantity>();
             var productNames = await _productRepository.GetAllProductNames(cancellationToken);
             double totalCostPrice = 0;
             foreach (var productName in productNames)
@@ -137,32 +155,39 @@ namespace Roqeeb_Project.Implementation.Service
                 {
                     var name = "";
                     var totalQuantity = 0;
-                    foreach (var productCart in getProductCarts)
+                    foreach(var productCart in getProductCarts)
                     {
                         totalQuantity += productCart.ProductQuantity;
                         name = productCart.ProductName;
-                        var product = await _productRepository.GetProductByNameAsync(productName, cancellationToken);
-                        totalCostPrice += product.CostPrice * totalQuantity;
+                        
                     }
-                    products.Add(name, totalQuantity);
+                    var product = await _productRepository.GetProductByNameAsync(productName, cancellationToken);
+                    totalCostPrice += product.CostPrice * totalQuantity;
+                    proAndQuo.Add(new ProductAndQuantity
+                    {
+                        ProductName = name,
+                        Quantity = totalQuantity
+                    });
 
-                   
-                    
                 }
                
             }
-            var salesCart = await _salesCartRepository.GetAllCartAsync(cancellationToken);
+            var salesCart = await _salesCartRepository.GetAllAsync(sc => sc.Date == date, cancellationToken);
             double totalSellingPrice = 0;
             foreach(var cart in salesCart)
             {
                 totalSellingPrice += cart.TotalAmount;
             }
-
+          
             return new BaseResponse<ViewSalesDTO>
             {
                 Data = new ViewSalesDTO
                 {
-                    Products = products,
+                    Products = proAndQuo.Select(pq => new ProductAndQuantity
+                    {
+                        ProductName = pq.ProductName,
+                        Quantity = pq.Quantity
+                    }).ToList(),
                     TotalSellingPrice = totalSellingPrice,
                     TotalCostPrice = totalCostPrice,
                     Profit = totalCostPrice - totalSellingPrice
@@ -242,10 +267,12 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Failed",
                 Status = false
             };
+           
             return new BaseResponse<IList<SalesDTO>>
             {
                 Data = sales.Select(s => new SalesDTO
                 {
+                    
                     Id = s.Id,
                     Cart = new SalesCartDTO
                     {
@@ -261,7 +288,9 @@ namespace Roqeeb_Project.Implementation.Service
                         TotalAmount = s.SalesCart.TotalAmount,
                     },
                     CustomerName = s.CustomerName,
-                    ReferenceNo = s.ReferenceNo
+                    ReferenceNo = s.ReferenceNo,
+                    Date = s.CreatedOn.ToString(),
+                    TotalCost = s.SalesCart.TotalAmount
 
                 }).ToList(),
                 Message = "Successful",
@@ -269,16 +298,22 @@ namespace Roqeeb_Project.Implementation.Service
             };
         }
 
-        public async Task<BaseResponse<IList<SalesDTO>>> GetByDate(DateTime date, CancellationToken cancellationToken)
+        public async Task<BaseResponse<IList<SalesDTO>>> GetByDate(string date, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            string newDate = date.ToString("yyyy-MM-dd");
-            var sales = await _salesRepository.GetAllAsync(s => s.CreatedOn.ToString().Contains(newDate), cancellationToken);
-            if (sales.Count == 0) return new BaseResponse<IList<SalesDTO>>
+           
+            var sales = await _salesRepository.GetAllAsync(s => s.CreatedOn.ToString().Contains(date), cancellationToken);
+            
+            if (sales.Count == 0)
             {
-                Message = "No sales made on this date",
-                Status = false
-            };
+                return new BaseResponse<IList<SalesDTO>>
+                {
+                    Status = false,
+                    Message = "No sales made on this date",
+                    
+                };
+            }
+           
             return new BaseResponse<IList<SalesDTO>>
             {
                 Data = sales.Select(s => new SalesDTO
@@ -298,7 +333,9 @@ namespace Roqeeb_Project.Implementation.Service
                         TotalAmount = s.SalesCart.TotalAmount,
                     },
                     CustomerName = s.CustomerName,
-                    ReferenceNo = s.ReferenceNo
+                    ReferenceNo = s.ReferenceNo,
+                    Date = s.CreatedOn.ToString(),
+                    TotalCost = s.SalesCart.TotalAmount,
 
                 }).ToList(),
                 Message = "Successful",

@@ -28,7 +28,15 @@ namespace Roqeeb_Project.Controllers
         {
             cancellationToken.ThrowIfCancellationRequested();
             var purchases = await _purchaseService.GetNonApprovedPurchase(cancellationToken);
-            if (purchases.Status == false) return BadRequest(purchases.Message);
+            if (purchases.Status == false) return BadRequest(purchases);
+            return Ok(purchases);
+        }
+        [HttpGet("ApprovedPurchase")]
+        public async Task<IActionResult> ApprovedPurchase(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var purchases = await _purchaseService.GetAllApprovedPurchase(cancellationToken);
+            if (purchases.Status == false) return BadRequest(purchases);
             return Ok(purchases);
         }
         [HttpPost("ApprovePurchase/{purchaseId}")]
@@ -38,6 +46,14 @@ namespace Roqeeb_Project.Controllers
             var purchase = await _purchaseService.ApprovePurchase(purchaseId, cancellationToken);
             if (purchase.Status == false) return BadRequest(purchase);
             return Ok(purchase);
+        }
+        [HttpGet("ViewPurchaseByDate/{date}")]
+        public async Task<IActionResult> ViewPurchaseByDate([FromRoute] string date, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var viewPurchase = await _purchaseService.GetByDate(date, cancellationToken);
+            if (viewPurchase.Status == false) return BadRequest(viewPurchase);
+            return Ok(viewPurchase);
         }
     }
 }

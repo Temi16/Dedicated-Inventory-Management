@@ -35,9 +35,8 @@ namespace Roqeeb_Project.Implementation.Service
             };
             var cart = new AdminCart
             {
-                
                 IsActive = true,
-                
+                TotalAmount = 0
             };
 
             await _adminCartRepository.CreateAsync(cart, cancellationToken);
@@ -46,7 +45,7 @@ namespace Roqeeb_Project.Implementation.Service
                 Data = new AdminCartDTO
                 {
                     Id = cart.Id,
-                    TotalAmount = 0,
+                    TotalAmount = cart.TotalAmount,
                     Products = null
                 },
                 Message = "Successful",
@@ -76,23 +75,37 @@ namespace Roqeeb_Project.Implementation.Service
                     };
                 }
                 await _adminCartRepository.AddProductToCart(product.Id, adminCartId, cancellationToken);
+                var productCart = new ProductCart
+                {
+                    ProductName = request.ProductName,
+                    Quantity = request.ProductQuantity,
+                    Price = product.CostPrice,
+                    AdminCartId = cart.Id,
+                    CreatedOn = DateTime.UtcNow,
+                };
+                await _productCartRepository.CreateAsync(productCart, cancellationToken);
             }
-           
-            var productCart = new ProductCart
+            else
             {
-                ProductName = request.ProductName,
-                Quantity = request.ProductQuantity,
-                Price = request.ProductPrice,
-                AdminCartId = cart.Id,
-                CreatedOn = DateTime.UtcNow,
-            };
-            await _productCartRepository.CreateAsync(productCart, cancellationToken);
+                var productCart = new ProductCart
+                {
+                    ProductName = request.ProductName,
+                    Quantity = request.ProductQuantity,
+                    Price = 0,
+                    AdminCartId = cart.Id,
+                    CreatedOn = DateTime.UtcNow,
+                };
+                await _productCartRepository.CreateAsync(productCart, cancellationToken);
+            }
             var productCarts = await _productCartRepository.GetProductCartByCartId(cart.Id, cancellationToken);
-            double totalPrice = 0;
-            foreach(var myPrice in productCarts)
+            double totalAmount = 0;
+            foreach(var productInCart in productCarts)
             {
-                totalPrice += myPrice.Price;
+                var amount = productInCart.Price * productInCart.Quantity;
+                totalAmount += amount;
             }
+            cart.TotalAmount = totalAmount;
+            await _adminCartRepository.UpdateAsync(cart, cancellationToken);
             return new BaseResponse<AdminCartDTO>
             {
                 Data = new AdminCartDTO
@@ -102,9 +115,10 @@ namespace Roqeeb_Project.Implementation.Service
                     {
                         ProductName = pc.ProductName,
                         Quantity = pc.Quantity,
-                        Price = pc.Price
+                        Price = pc.Price,
+                        TotalPrice = pc.Price * pc.Quantity
                     }).ToList(),
-                    TotalAmount = totalPrice
+                    TotalAmount = totalAmount
                 },
                 Message = "Successful",
                 Status = true
@@ -151,10 +165,11 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 products.Add(product);
             }
-            double totalPrice = 0;
-            foreach(var myProduct in products)
+            double totalAmount = 0;
+            foreach (var productInCart in cart.productCarts)
             {
-                totalPrice += myProduct.Price;
+                var amount = productInCart.Price * productInCart.Quantity;
+                totalAmount += amount;
             }
             return new BaseResponse<AdminCartDTO>
             {
@@ -164,9 +179,11 @@ namespace Roqeeb_Project.Implementation.Service
                     Products = products.Select(pc => new ProductCartDTO
                     {
                         ProductName = pc.ProductName,
-                        Quantity = pc.Quantity
+                        Quantity = pc.Quantity,
+                        Price = pc.Price,
+                        TotalPrice = pc.Price * pc.Quantity
                     }).ToList(),
-                    TotalAmount = totalPrice
+                    TotalAmount = totalAmount
 
                 },
                 Message = "Successful",
@@ -224,11 +241,14 @@ namespace Roqeeb_Project.Implementation.Service
             var product = await _productRepository.GetProductByNameAsync(productName, cancellationToken);
             if (product == null) return new BaseResponse<bool>
             {
-                Status = false
+                Status = false,
+                Message = "Does not exist",
+                
             };
             return new BaseResponse<bool>
             {
-                Status = true
+                Status = true,
+                Message = " exist",
             };
 
             

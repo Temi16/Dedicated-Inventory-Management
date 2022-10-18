@@ -11,7 +11,7 @@ namespace Roqeeb_Project.Interface.Service
     {
         Task<BaseResponse<SalesDTO>> Create(string cartId, string CustomerName, CancellationToken cancellationToken);
         Task<BaseResponse<IList<SalesDTO>>> GetAll(CancellationToken cancellationToken);
-        Task<BaseResponse<IList<SalesDTO>>> GetByDate(DateTime date, CancellationToken cancellationToken);
+        Task<BaseResponse<IList<SalesDTO>>> GetByDate(string date, CancellationToken cancellationToken);
         Task<BaseResponse<ViewSalesDTO>> ViewSalesToday(CancellationToken cancellationToken);
         Task<BaseResponse<ViewSalesDTO>> ViewSalesThisWeek(CancellationToken cancellationToken);
         Task<BaseResponse<ViewSalesDTO>> ViewSalesThisMonth(CancellationToken cancellationToken);

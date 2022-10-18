@@ -54,12 +54,12 @@ namespace Roqeeb_Project.Controllers
             if (viewSales.Status == false) return BadRequest(viewSales.Message);
             return Ok(viewSales);
         }
-        [HttpGet("ViewSalesByDate")]
-        public async Task<IActionResult> ViewSalesByDate(DateTime date, CancellationToken cancellationToken)
+        [HttpGet("ViewSalesByDate/{date}")]
+        public async Task<IActionResult> ViewSalesByDate([FromRoute]string date, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var viewSales = await _salesService.GetByDate(date, cancellationToken);
-            if (viewSales.Status == false) return BadRequest(viewSales.Message);
+            if (viewSales.Status == false) return Ok(viewSales);
             return Ok(viewSales);
         }
     }

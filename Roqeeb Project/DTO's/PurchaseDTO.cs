@@ -14,6 +14,7 @@
         public string ReferenceNo { get; set; }
         public string SupplierName { get; set; }
         public string DateCreated { get; set; }
+        public double TotalAmount { get; set; }
     }
     public class CreatePurchaseRequestModel
     {

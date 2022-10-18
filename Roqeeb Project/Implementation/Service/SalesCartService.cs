@@ -100,6 +100,9 @@ namespace Roqeeb_Project.Implementation.Service
         {
             cancellationToken.ThrowIfCancellationRequested();
             var cart = await _salesCartRepository.GetAllAsync(ac => ac.IsActive == true, cancellationToken);
+            var date = DateTime.Today.ToString("dd:MM:yy");
+            var month = DateTime.Now.ToString("MM");
+            var stopWeek = DateTime.Now.AddDays(7);
             if (cart.Count != 0) return new BaseResponse<SalesCartDTO>
             {
                 Message = "Exists",
@@ -108,6 +111,10 @@ namespace Roqeeb_Project.Implementation.Service
             var newCart = new SalesCart
             {
                 IsActive = true,
+                Date = date,
+                Month = month,
+                Week = stopWeek
+
             };
             await _salesCartRepository.CreateAsync(newCart, cancellationToken);
             return new BaseResponse<SalesCartDTO>
@@ -115,6 +122,7 @@ namespace Roqeeb_Project.Implementation.Service
                 Data = new SalesCartDTO
                 {
                     Id = newCart.Id,
+                    Date = date,
                     ProductSalesCarts = null,
                     TotalAmount = 0
                 },
@@ -123,7 +131,7 @@ namespace Roqeeb_Project.Implementation.Service
             };
         }
 
-        public async Task<BaseResponse<SalesCartDTO>> EditCart(string cartId, string ProductName, EditProductSalesCart request, CancellationToken cancellationToken)
+        public async Task<BaseResponse<SalesCartDTO>> EditCart(string cartId, string ProductName, double sellingPrice, int quantity, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (string.IsNullOrEmpty(cartId)) throw new ArgumentNullException(null);
@@ -135,8 +143,8 @@ namespace Roqeeb_Project.Implementation.Service
             };
 
             var productSalesCart = await _productSalesCartRepository.GetAsync(psc => psc.ProductName == ProductName && psc.SalesCartId == cart.Id, cancellationToken);
-            productSalesCart.ProductQuantity = request.Quantity;
-            productSalesCart.Price = request.SellingPrice;
+            productSalesCart.ProductQuantity = quantity;
+            productSalesCart.Price = sellingPrice;
             await _productSalesCartRepository.UpdateAsync(productSalesCart, cancellationToken);
             return new BaseResponse<SalesCartDTO>
             {
@@ -162,6 +170,29 @@ namespace Roqeeb_Project.Implementation.Service
             {
 
                 Message = "Successfully removed",
+                Status = true
+
+            };
+        }
+        public async Task<BaseResponse<SalesCartDTO>> DeleteUpdateAllCart(string cartId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (string.IsNullOrEmpty(cartId)) throw new ArgumentNullException(null);
+            var cart = await _salesCartRepository.GetById(cartId, cancellationToken);
+            if (cart == null) return new BaseResponse<SalesCartDTO>
+            {
+                Message = "Does not exist",
+                Status = false
+            };
+            var productSalesCarts = await _productSalesCartRepository.GetProductSalesCartByCartId(cart.Id, cancellationToken);
+            foreach(var productCart in productSalesCarts)
+            {
+                await _productSalesCartRepository.DeleteAsync(productCart, cancellationToken);
+            }
+            return new BaseResponse<SalesCartDTO>
+            {
+
+                Message = "Successfully cleared",
                 Status = true
 
             };
@@ -207,10 +238,12 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 products.Add(product);
             }
-            double totalPrice = 0;
+            double totalCartPrice = 0;
             foreach (var myProduct in products)
             {
+                double totalPrice = 0;
                 totalPrice += myProduct.Price * myProduct.ProductQuantity;
+                totalCartPrice += totalPrice;
             }
             return new BaseResponse<SalesCartDTO>
             {
@@ -225,7 +258,7 @@ namespace Roqeeb_Project.Implementation.Service
                         TotalPrice = pc.ProductQuantity * pc.Price
                         
                     }).ToList(),
-                    TotalAmount = totalPrice
+                    TotalAmount = totalCartPrice
 
                 },
                 Message = "Successful",
