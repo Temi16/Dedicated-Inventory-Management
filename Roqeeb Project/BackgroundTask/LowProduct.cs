@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Roqeeb_Project.DTO_s;
 using Roqeeb_Project.Entities;
@@ -14,23 +15,23 @@ namespace Roqeeb_Project.BackgroundTask
         {
             _productRepository = productRepository;
         }
-        public async Task<BaseResponse<LowProductDTO>> LowProductMessage(Product product, CancellationToken cancellationToken)
+        public async Task<BaseResponse<IList<LowProductDTO>>> LowProductMessage(Product product, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var myProduct = await _productRepository.GetProductByIdAsync(product.Id, cancellationToken);
-            if (myProduct == null) return new BaseResponse<LowProductDTO>
+            if (myProduct == null) return new BaseResponse<IList<LowProductDTO>>
             {
                 Message = "Failed",
                 Status = false
             };
-            return new BaseResponse<LowProductDTO>
+            return new BaseResponse<IList<LowProductDTO>>
             {
-                Data = new LowProductDTO
-                {
-                    ProductName = myProduct.ProductName,
-                    ProductQuantity = myProduct.Quantity
-                },
-                Message = "Successfull",
+                //Data = new LowProductDTO
+                //{
+                //    ProductName = myProduct.ProductName,
+                //    ProductQuantity = myProduct.Quantity
+                //},
+                Message = "This Product is low on quantity",
                 Status = true
             };
         }

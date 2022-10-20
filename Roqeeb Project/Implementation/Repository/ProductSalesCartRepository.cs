@@ -33,7 +33,7 @@ namespace Roqeeb_Project.Implementation.Repository
             cancellationToken.ThrowIfCancellationRequested();
             var productSalesCart = await _context.ProductSalesCarts
                 .Include(psc => psc.SalesCart)
-                .SingleOrDefaultAsync(expression, cancellationToken);
+                .FirstOrDefaultAsync(expression, cancellationToken);
             return productSalesCart;
         }
         public async Task<IList<ProductSalesCart>> GetAllAsync(Expression<Func<ProductSalesCart, bool>> expression, CancellationToken cancellationToken)

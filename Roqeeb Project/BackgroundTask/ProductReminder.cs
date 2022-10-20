@@ -7,32 +7,38 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NCrontab;
 using Roqeeb_Project.Entities;
+using Roqeeb_Project.Interface.Repository;
 using Roqeeb_Project.Interface.Service;
 
 namespace Roqeeb_Project.BackgroundTask
 {
     public class ProductReminder : BackgroundService
     {
+        private readonly ProductReminderConfig _config;
         private CrontabSchedule _schedule;
         private DateTime _nextRun;
         private readonly ILogger<ProductReminder> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        public ProductReminder(IServiceScopeFactory serviceScopeFactory, ILogger<ProductReminder> logger)
+       
+        public ProductReminder(IServiceScopeFactory serviceScopeFactory, IOptions<ProductReminderConfig> configuration, ILogger<ProductReminder> logger)
         {
+            _config = configuration.Value;
             _serviceScopeFactory = serviceScopeFactory;
             _logger = logger;
+            _schedule = CrontabSchedule.Parse(_config.CronExpression);
             _nextRun = _schedule.GetNextOccurrence(DateTime.UtcNow);
-            
-
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while(!stoppingToken.IsCancellationRequested)
             {
                 var now = DateTime.UtcNow;
+                Console.WriteLine("Hi");
                 try
                 {
                     using var scope = _serviceScopeFactory.CreateScope();
+                    var delete = scope.ServiceProvider.GetRequiredService<INotificationService>();
+                    await delete.ClearAll(stoppingToken);
                     var productContext = scope.ServiceProvider.GetRequiredService<IProductService>();
                     var products = await productContext.ViewAllProducts(stoppingToken);
                     var lowProductContext = scope.ServiceProvider.GetRequiredService<ILowProduct>();
@@ -44,9 +50,18 @@ namespace Roqeeb_Project.BackgroundTask
                             ProductName = myProduct.Data.ProductName,
                             Quantity = myProduct.Data.Quantity
                         };
-                        if(product.Quantity == product.Quantity)
+                        if(product.Quantity < product.SetLowQuantity || product.Quantity == product.SetLowQuantity)
                         {
-                           await lowProductContext.LowProductMessage(newProduct, stoppingToken);
+                           //await lowProductContext.LowProductMessage(newProduct, stoppingToken);
+                            var notification = new Notification
+                            {
+                                IsRead = false,
+                                Message = $"You have {product.Quantity} pieces of {product.ProductName} left"
+                            };
+                            var create = scope.ServiceProvider.GetRequiredService<INotificationRepository>();
+                            await create.CreateAsync(notification, stoppingToken);
+                            //await _notificationRepository.CreateAsync(notification, stoppingToken);
+                            
                         }
                     }
                 }

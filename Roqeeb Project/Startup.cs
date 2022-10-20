@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Roqeeb_Project.Configure;
 using Roqeeb_Project.Context;
+using Roqeeb_Project.Entities;
 using Roqeeb_Project.Identity;
 using Roqeeb_Project.Implementation.Identity.Repositories;
 using Roqeeb_Project.Implementation.Repository;
@@ -48,6 +49,7 @@ namespace Roqeeb_Project
                        policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
                    });
             });
+            services.Configure<ProductReminderConfig>(Configuration.GetSection("ProductReminderConfig"));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddHttpContextAccessor();
             services.AddDbContext<ApplicationContext>(option => option.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));

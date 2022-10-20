@@ -11,5 +11,6 @@ namespace Roqeeb_Project.View_Models.RequestModels
         public double SellingPrice { get; set; }
         public string SectionName { get; set; }
         public bool IsAvalaible { get; set; }
+        public int SetLowQuantity { get; set; }
     }
 }

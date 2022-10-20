@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Roqeeb_Project.Auth.Service;
+using Roqeeb_Project.BackgroundTask;
 using Roqeeb_Project.Context;
 using Roqeeb_Project.Identity;
 using Roqeeb_Project.Implementation.Identity.Repositories;
@@ -23,6 +24,7 @@ using Roqeeb_Project.Implementation.Repository;
 using Roqeeb_Project.Implementation.Service;
 using Roqeeb_Project.Interface.Repository;
 using Roqeeb_Project.Interface.Service;
+using Roqeeb_Project.SendMail;
 
 namespace Roqeeb_Project.Configure
 {
@@ -56,12 +58,19 @@ namespace Roqeeb_Project.Configure
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISalesService, SalesService>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IMailMessage, MailMessage>();
             services.AddScoped<ISalesRepository, SalesRepository>();
             services.AddScoped<ISalesCartRepository, SalesCartRepository>();
             services.AddScoped<ISalesCartService, SalesCartService>();
             services.AddScoped<IProductSalesCartRepository, ProductSalesCartRepository>();
             services.AddScoped<ISupplierRepository, SupplierRepository>();
             services.AddScoped<ISupplierService, SupplierService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddHostedService<ProductReminder>();
+            services.AddScoped<ILowProduct, LowProduct>();
 
 
             return services;

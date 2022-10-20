@@ -8,7 +8,9 @@ using Roqeeb_Project.Identity;
 using Roqeeb_Project.Implementation.Identity.Repositories;
 using Roqeeb_Project.Interface.Repository;
 using Roqeeb_Project.Interface.Service;
+using Roqeeb_Project.SendMail;
 using Roqeeb_Project.View_Models.ResponseModels;
+using static Roqeeb_Project.SendMail.EmailDTO;
 
 namespace Roqeeb_Project.Implementation.Service
 {
@@ -16,12 +18,16 @@ namespace Roqeeb_Project.Implementation.Service
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IUserStore<User> _userRepository;
+        private readonly IUserRoleStore<User> _userRoleRepository;
         private readonly IIdentityService _identityService;
-        public EmployeeService(IEmployeeRepository employeeRepository, IUserStore<User> userRepository, IIdentityService identityService)
+        private readonly IMailMessage _email;
+        public EmployeeService(IEmployeeRepository employeeRepository, IUserStore<User> userRepository, IIdentityService identityService, IMailMessage email, IUserRoleStore<User> userRoleRepository)
         {
             _employeeRepository = employeeRepository;
             _userRepository = userRepository;
             _identityService = identityService;
+            _email = email;
+            _userRoleRepository = userRoleRepository;
         }
 
         public async Task<BaseResponse<EmployeeDTO>> CreateEmployee(CreateEmployeeRequestModel request, CancellationToken cancellationToken)
@@ -33,6 +39,14 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Email Exists",
                 Status = false
             };
+            var mailRequest = new EmailRequestModel
+            {
+                ReceiverEmail = request.Email,
+                Message = $"Congratulations {request.FirstName}, you now have access to the Golden Inventory app. Click the link to continue",
+                ReceiverName = $"{request.FirstName} {request.LastName}",
+                Subject = "Employee Registration"
+            };
+            await _email.SendEmail(mailRequest);
             var user = new User
             {
                 FirstName = request.FirstName,
@@ -43,14 +57,17 @@ namespace Roqeeb_Project.Implementation.Service
                 
             };
             await _userRepository.CreateAsync(user, cancellationToken);
+            await _userRoleRepository.AddToRoleAsync(user, "Employee", cancellationToken);
             var newEmployee = new Employee
             {
                 Email = request.Email,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 UserId = user.Id,
+
             };
             await _employeeRepository.CreayeAsync(newEmployee, cancellationToken);
+           
             return new BaseResponse<EmployeeDTO>
             {
                 Data = new EmployeeDTO
@@ -71,6 +88,12 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Employee does not exist",
                 Status = false
             };
+            var getUser = await _userRepository.FindByNameAsync(request.UserName, cancellationToken);
+            if (getUser != null) return new BaseResponse<EmployeeDTO>
+            {
+                Message = "This username already exists",
+                Status = false
+            };
             var user = await _userRepository.FindByIdAsync(employee.UserId, cancellationToken);
             user.Username = request.UserName;
             user.Password = $"{request.Password}{user.Salt}";
@@ -78,7 +101,6 @@ namespace Roqeeb_Project.Implementation.Service
             await _userRepository.UpdateAsync(user, cancellationToken);
             employee.User.Username = request.UserName;
             employee.Age = request.Age;
-            employee.Email = request.Email;
             employee.PhoneNumber = request.PhoneNumber;
             await _employeeRepository.UpdateEmployee(employee, cancellationToken);
             return new BaseResponse<EmployeeDTO>

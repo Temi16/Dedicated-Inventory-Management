@@ -9,8 +9,8 @@ using Roqeeb_Project.Context;
 namespace Roqeeb_Project.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20221014201824_sales")]
-    partial class sales
+    [Migration("20221020012120_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -70,13 +70,13 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a8a858eb-63ae-41f8-b166-77d76417a871",
+                            Id = "dbd0c6c8-8798-4a30-aa0e-7626c9e08447",
                             Age = 20,
                             Email = "raufroqeeb123@gmail.com",
                             FirstName = "Roqeeb",
                             IsDeleted = false,
                             LastName = "Temidayo",
-                            UserId = "d5018885-d210-4ce3-9b47-187039f6f3cf"
+                            UserId = "2803058e-1d20-40bc-9866-4664cd0c1ede"
                         });
                 });
 
@@ -218,6 +218,22 @@ namespace Roqeeb_Project.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("Roqeeb_Project.Entities.Notification", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("Roqeeb_Project.Entities.Order", b =>
                 {
                     b.Property<string>("Id")
@@ -303,6 +319,9 @@ namespace Roqeeb_Project.Migrations
 
                     b.Property<double>("SellingPrice")
                         .HasColumnType("double");
+
+                    b.Property<int>("SetLowQuantity")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -699,8 +718,14 @@ namespace Roqeeb_Project.Migrations
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime");
 
+                    b.Property<string>("Month")
+                        .HasColumnType("text");
+
                     b.Property<double>("TotalAmount")
                         .HasColumnType("double");
+
+                    b.Property<DateTime>("Week")
+                        .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
@@ -859,9 +884,15 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1cf9d548-4505-4050-b9f7-93029b5014ea",
+                            Id = "fb059154-1856-40bc-8608-0b2b04e4b0a2",
                             IsDeleted = false,
                             Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = "9d88d0ab-71ec-4ff3-85eb-e776a7eb34cf",
+                            IsDeleted = false,
+                            Name = "Employee"
                         });
                 });
 
@@ -919,14 +950,14 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d5018885-d210-4ce3-9b47-187039f6f3cf",
+                            Id = "2803058e-1d20-40bc-9866-4664cd0c1ede",
                             Email = "raufroqeeb123@gmail.com",
                             FirstName = "Roqeeb",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
                             LastName = "Temidayo",
-                            Password = "temi123hNieRSCFTjdIXw==",
-                            Salt = "hNieRSCFTjdIXw==",
+                            Password = "temi123Ucf0r0ay1zFDWA==",
+                            Salt = "Ucf0r0ay1zFDWA==",
                             Username = "RRT"
                         });
                 });
@@ -974,10 +1005,10 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3cf030a3-7d55-4a90-85fa-ae67c0d947ac",
+                            Id = "32639f89-74f8-4482-89ec-ff8ea2a06935",
                             IsDeleted = false,
-                            RoleId = "1cf9d548-4505-4050-b9f7-93029b5014ea",
-                            UserId = "d5018885-d210-4ce3-9b47-187039f6f3cf"
+                            RoleId = "fb059154-1856-40bc-8608-0b2b04e4b0a2",
+                            UserId = "2803058e-1d20-40bc-9866-4664cd0c1ede"
                         });
                 });
 

@@ -242,9 +242,12 @@ namespace Roqeeb_Project.Implementation.Identity.Repositories
             throw new System.NotImplementedException();
         }
 
-        public Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
+        public async Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync(cancellationToken);
+            return IdentityResult.Success;
         }
     }
 }

@@ -28,6 +28,19 @@ namespace Roqeeb_Project.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(767)", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: true),
+                    IsRead = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -38,6 +51,7 @@ namespace Roqeeb_Project.Migrations
                     SellingPrice = table.Column<double>(type: "double", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     IsAvalaible = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    SetLowQuantity = table.Column<int>(type: "int", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -78,6 +92,9 @@ namespace Roqeeb_Project.Migrations
                     Id = table.Column<string>(type: "varchar(767)", nullable: false),
                     IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     TotalAmount = table.Column<double>(type: "double", nullable: false),
+                    Date = table.Column<string>(type: "text", nullable: true),
+                    Week = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Month = table.Column<string>(type: "text", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -582,22 +599,27 @@ namespace Roqeeb_Project.Migrations
             migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "Description", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
-                values: new object[] { "8078ec8a-e78b-417f-b086-b0568c4de5b8", null, null, null, null, null, false, null, null, "Admin" });
+                values: new object[] { "fb059154-1856-40bc-8608-0b2b04e4b0a2", null, null, null, null, null, false, null, null, "Admin" });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "Description", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
+                values: new object[] { "9d88d0ab-71ec-4ff3-85eb-e776a7eb34cf", null, null, null, null, null, false, null, null, "Employee" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "Email", "FirstName", "IsDeleted", "IsEmailConfirmed", "LastModifiedBy", "LastModifiedOn", "LastName", "Password", "Salt", "Username" },
-                values: new object[] { "403264e0-95b7-4a07-9bc1-4d21033a4238", null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, true, null, null, "Temidayo", "temi123Fp0VPm6mRc8l8g==", "Fp0VPm6mRc8l8g==", "RRT" });
+                values: new object[] { "2803058e-1d20-40bc-9866-4664cd0c1ede", null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, true, null, null, "Temidayo", "temi123Ucf0r0ay1zFDWA==", "Ucf0r0ay1zFDWA==", "RRT" });
 
             migrationBuilder.InsertData(
                 table: "Admins",
                 columns: new[] { "Id", "Age", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "Email", "FirstName", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "LastName", "UserId" },
-                values: new object[] { "0a8bc963-4c89-43a0-9c0b-a0076a90bc0f", 20, null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, null, null, "Temidayo", "403264e0-95b7-4a07-9bc1-4d21033a4238" });
+                values: new object[] { "dbd0c6c8-8798-4a30-aa0e-7626c9e08447", 20, null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, null, null, "Temidayo", "2803058e-1d20-40bc-9866-4664cd0c1ede" });
 
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "RoleId", "UserId" },
-                values: new object[] { "93e15d16-ae00-4761-971b-2fa32fd30ce4", null, null, null, null, false, null, null, "8078ec8a-e78b-417f-b086-b0568c4de5b8", "403264e0-95b7-4a07-9bc1-4d21033a4238" });
+                values: new object[] { "32639f89-74f8-4482-89ec-ff8ea2a06935", null, null, null, null, false, null, null, "fb059154-1856-40bc-8608-0b2b04e4b0a2", "2803058e-1d20-40bc-9866-4664cd0c1ede" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Admins_UserId",
@@ -710,6 +732,9 @@ namespace Roqeeb_Project.Migrations
 
             migrationBuilder.DropTable(
                 name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "Orders");

@@ -68,13 +68,13 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "69a69f0f-89ec-4290-9e4d-79a16908bf21",
+                            Id = "dbd0c6c8-8798-4a30-aa0e-7626c9e08447",
                             Age = 20,
                             Email = "raufroqeeb123@gmail.com",
                             FirstName = "Roqeeb",
                             IsDeleted = false,
                             LastName = "Temidayo",
-                            UserId = "4e7cd7e6-2e6c-45b3-8386-a855e5086e8a"
+                            UserId = "2803058e-1d20-40bc-9866-4664cd0c1ede"
                         });
                 });
 
@@ -216,6 +216,22 @@ namespace Roqeeb_Project.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("Roqeeb_Project.Entities.Notification", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("Roqeeb_Project.Entities.Order", b =>
                 {
                     b.Property<string>("Id")
@@ -301,6 +317,9 @@ namespace Roqeeb_Project.Migrations
 
                     b.Property<double>("SellingPrice")
                         .HasColumnType("double");
+
+                    b.Property<int>("SetLowQuantity")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -863,9 +882,15 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ee5348b5-4cbd-4857-a9b4-370f458bfead",
+                            Id = "fb059154-1856-40bc-8608-0b2b04e4b0a2",
                             IsDeleted = false,
                             Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = "9d88d0ab-71ec-4ff3-85eb-e776a7eb34cf",
+                            IsDeleted = false,
+                            Name = "Employee"
                         });
                 });
 
@@ -923,14 +948,14 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4e7cd7e6-2e6c-45b3-8386-a855e5086e8a",
+                            Id = "2803058e-1d20-40bc-9866-4664cd0c1ede",
                             Email = "raufroqeeb123@gmail.com",
                             FirstName = "Roqeeb",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
                             LastName = "Temidayo",
-                            Password = "temi123idbm1OQckwHMBw==",
-                            Salt = "idbm1OQckwHMBw==",
+                            Password = "temi123Ucf0r0ay1zFDWA==",
+                            Salt = "Ucf0r0ay1zFDWA==",
                             Username = "RRT"
                         });
                 });
@@ -978,10 +1003,10 @@ namespace Roqeeb_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a6873fff-18f0-4e8f-870f-dbe9ac638f49",
+                            Id = "32639f89-74f8-4482-89ec-ff8ea2a06935",
                             IsDeleted = false,
-                            RoleId = "ee5348b5-4cbd-4857-a9b4-370f458bfead",
-                            UserId = "4e7cd7e6-2e6c-45b3-8386-a855e5086e8a"
+                            RoleId = "fb059154-1856-40bc-8608-0b2b04e4b0a2",
+                            UserId = "2803058e-1d20-40bc-9866-4664cd0c1ede"
                         });
                 });
 

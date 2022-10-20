@@ -52,11 +52,7 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "Section Name does not exists",
                 Status = false
             };
-            List<Section> sections = new List<Section>();
-            foreach (var productSections in product.productSections)
-            {
-                sections.Add(productSections.Section);
-            }
+          
             var newProduct = new Product
             {
                 ProductName = request.ProductName,
@@ -67,11 +63,17 @@ namespace Roqeeb_Project.Implementation.Service
                 CreatedBy = _identityService.GetUserIdentity(),
                 CreatedOn = DateTime.UtcNow,
                 IsAvalaible = request.IsAvalaible,
+                SetLowQuantity = request.SetLowQuantity,
                 IsDeleted = false,
                 
             };
             await _productRepository.CreateProductAsync(newProduct, cancellationToken);
             await _productRepository.AddToSection(newProduct, section.SectionName, cancellationToken);
+            List<Section> sections = new List<Section>();
+            foreach (var productSections in newProduct.productSections)
+            {
+                sections.Add(productSections.Section);
+            }
             return new BaseResponse<ProductDTO>
             {
                 Data = new ProductDTO
@@ -82,6 +84,7 @@ namespace Roqeeb_Project.Implementation.Service
                     CostPrice = newProduct.CostPrice,
                     SellingPrice = newProduct.SellingPrice,
                     Description = newProduct.ProductDescription,
+                    SetLowQuantity = newProduct.SetLowQuantity,
                     SectionName = sections.Select(se => new SectionDTO
                     {
                         Id = se.Id,
@@ -109,7 +112,7 @@ namespace Roqeeb_Project.Implementation.Service
                     Quantity = product.Quantity,
                     CostPrice = product.CostPrice,
                     SellingPrice = product.SellingPrice,
-                   
+                    SetLowQuantity = product.SetLowQuantity,
                 },
                 Message = "Deleted Successfully",
                 Status = true
@@ -141,6 +144,7 @@ namespace Roqeeb_Project.Implementation.Service
                     Quantity = product.Quantity,
                     CostPrice = product.CostPrice,
                     SellingPrice = product.SellingPrice,
+                    SetLowQuantity = product.SetLowQuantity,
                     SectionName = sections.Select(se => new SectionDTO
                     {
                         Id = se.Id,
@@ -180,6 +184,7 @@ namespace Roqeeb_Project.Implementation.Service
                     Description = product.ProductDescription,
                     CostPrice = product.CostPrice,
                     SellingPrice = product.SellingPrice,
+                    SetLowQuantity = product.SetLowQuantity,
                     SectionName = sections.Select(se => new SectionDTO
                     {
                         Id = se.Id,
@@ -231,7 +236,7 @@ namespace Roqeeb_Project.Implementation.Service
             };
             product.Quantity = request.Quantity == 0 ? product.Quantity : request.Quantity;
             product.CostPrice = request.CostPrice == 0 ? product.CostPrice : request.CostPrice;
-            product.SellingPrice = request.SellngPrice == 0 ? product.SellingPrice : request.SellngPrice;
+            product.SellingPrice = request.SellingPrice == 0 ? product.SellingPrice : request.SellingPrice;
             product.ProductName = request.ProductName ?? request.ProductName;
             product.LastModifiedBy = _identityService.GetUserIdentity();
             product.LastModifiedOn = DateTime.UtcNow;
@@ -265,8 +270,6 @@ namespace Roqeeb_Project.Implementation.Service
                 Message = "No products available",
                 Status = false
             };
-           
-            
             return new BaseResponse<IEnumerable<ProductDTO>>
             {
                 Data = products.Select(p => new ProductDTO
@@ -277,6 +280,7 @@ namespace Roqeeb_Project.Implementation.Service
                     CostPrice = p.CostPrice,
                     Quantity = p.Quantity,
                     SellingPrice = p.SellingPrice,
+                    SetLowQuantity = p.SetLowQuantity,
                     SectionName = p.productSections.Select(ps => new SectionDTO 
                     {
                         Id = ps.SectionId,

@@ -75,7 +75,7 @@ namespace Roqeeb_Project.Implementation.Service
                     }).ToList(),
                     TotalSellingPrice = totalSellingPrice,
                     TotalCostPrice = totalCostPrice,
-                    Profit = totalCostPrice - totalSellingPrice
+                    Profit = totalSellingPrice - totalCostPrice
                 },
                 Message = "Successful",
                 Status = true
@@ -133,7 +133,7 @@ namespace Roqeeb_Project.Implementation.Service
                     }).ToList(),
                     TotalSellingPrice = totalSellingPrice,
                     TotalCostPrice = totalCostPrice,
-                    Profit = totalCostPrice - totalSellingPrice
+                    Profit = totalSellingPrice - totalCostPrice
                 },
                 Message = "Successful",
                 Status = true
@@ -159,7 +159,6 @@ namespace Roqeeb_Project.Implementation.Service
                     {
                         totalQuantity += productCart.ProductQuantity;
                         name = productCart.ProductName;
-                        
                     }
                     var product = await _productRepository.GetProductByNameAsync(productName, cancellationToken);
                     totalCostPrice += product.CostPrice * totalQuantity;
@@ -172,12 +171,13 @@ namespace Roqeeb_Project.Implementation.Service
                 }
                
             }
-            var salesCart = await _salesCartRepository.GetAllAsync(sc => sc.Date == date, cancellationToken);
             double totalSellingPrice = 0;
+            var salesCart = await _salesCartRepository.GetAllAsync(sc => sc.Date == date, cancellationToken);
             foreach(var cart in salesCart)
             {
                 totalSellingPrice += cart.TotalAmount;
             }
+            
           
             return new BaseResponse<ViewSalesDTO>
             {
@@ -190,7 +190,7 @@ namespace Roqeeb_Project.Implementation.Service
                     }).ToList(),
                     TotalSellingPrice = totalSellingPrice,
                     TotalCostPrice = totalCostPrice,
-                    Profit = totalCostPrice - totalSellingPrice
+                    Profit = totalSellingPrice - totalCostPrice
                 },
                 Message = "Successful",
                 Status = true
@@ -343,5 +343,49 @@ namespace Roqeeb_Project.Implementation.Service
             };
 
         }
+        //public async Task<BaseResponse<IList<SalesDTO>>> GetByMonth(string month, CancellationToken cancellationToken)
+        //{
+        //    cancellationToken.ThrowIfCancellationRequested();
+        //    var sales = await _salesRepository.GetAllAsync(x => x.CreatedOn.Month == month, cancellationToken);
+
+        //    if (sales.Count == 0)
+        //    {
+        //        return new BaseResponse<IList<SalesDTO>>
+        //        {
+        //            Status = false,
+        //            Message = "No sales made on this date",
+
+        //        };
+        //    }
+
+        //    return new BaseResponse<IList<SalesDTO>>
+        //    {
+        //        Data = sales.Select(s => new SalesDTO
+        //        {
+        //            Id = s.Id,
+        //            Cart = new SalesCartDTO
+        //            {
+        //                Id = s.SalesCartId,
+        //                ProductSalesCarts = s.SalesCart.ProductSalesCarts.Select(ps => new ProductSalesCartDTO
+        //                {
+
+        //                    ProductName = ps.ProductName,
+        //                    ProductQuantity = ps.ProductQuantity,
+        //                    ProductPrice = ps.Price,
+        //                    TotalPrice = ps.Price * ps.ProductQuantity
+        //                }).ToList(),
+        //                TotalAmount = s.SalesCart.TotalAmount,
+        //            },
+        //            CustomerName = s.CustomerName,
+        //            ReferenceNo = s.ReferenceNo,
+        //            Date = s.CreatedOn.ToString(),
+        //            TotalCost = s.SalesCart.TotalAmount,
+
+        //        }).ToList(),
+        //        Message = "Successful",
+        //        Status = true
+        //    };
+
+        //}
     }
 }

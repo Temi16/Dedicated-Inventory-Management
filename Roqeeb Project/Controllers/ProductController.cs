@@ -21,35 +21,35 @@ namespace Roqeeb_Project.Controllers
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductRequestModel request, CancellationToken cancellationToken)
         {
             var product = await _productService.CreateProduct(request, cancellationToken);
-            if (product.Status == false) return BadRequest(product.Message);
+            if (product.Status == false) return BadRequest(product);
             return Ok(product);
         }
         [HttpPut("UpdateProduct")]
         public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductRequestModel request, CancellationToken cancellationToken)
         {
             var newProduct = await _productService.UpdateProduct(request, cancellationToken);
-            if (newProduct.Status == false) return BadRequest(newProduct.Message);
+            if (newProduct.Status == false) return BadRequest(newProduct);
             return Ok(newProduct);
         }
         [HttpGet("GetProduct/{productName}")]
         public async Task<IActionResult> GetProduct([FromRoute] string productName, CancellationToken cancellationToken)
         {
             var product = await _productService.GetProductByName(productName, cancellationToken);
-            if (product.Status == false) return BadRequest(product.Message);
+            if (product.Status == false) return BadRequest(product);
             return Ok(product);
         }
         [HttpGet("ViewAll")]
         public async Task<IActionResult> ViewAllProducts(CancellationToken cancellationToken)
         {
              var products = await _productService.ViewAllProducts(cancellationToken);
-            if(products.Status == false) return BadRequest(products.Message);
+            if(products.Status == false) return BadRequest(products);
             return Ok(products);
         }
         [HttpGet("Track/{productName}")]
         public async Task<IActionResult> TrackProduct([FromRoute] string productName, CancellationToken cancellationToken)
         {
             var productLocation = await _productService.TrackProduct(productName, cancellationToken);
-            if (productLocation.Status == false) return BadRequest(productLocation.Message);
+            if (productLocation.Status == false) return BadRequest(productLocation);
             return Ok(productLocation);
         }
     }
