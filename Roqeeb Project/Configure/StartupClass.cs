@@ -69,10 +69,17 @@ namespace Roqeeb_Project.Configure
             services.AddScoped<ISupplierService, SupplierService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddHostedService<ProductReminder>();
             services.AddScoped<ILowProduct, LowProduct>();
-
-
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ICustomerCartRepository, CustomerCartRepository>();
+            services.AddScoped<ICustomerCartService, CustomerCartService>();
+            services.AddScoped<IProductCustomerCartRepository, ProductCustomerCartRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IPaymentService, PaymentService>();
             return services;
         }
     }

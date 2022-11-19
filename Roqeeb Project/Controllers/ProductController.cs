@@ -1,5 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Roqeeb_Project.Interface.Service;
@@ -13,13 +17,32 @@ namespace Roqeeb_Project.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService productService)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public ProductController(IProductService productService, IWebHostEnvironment webHostEnvironment)
         {
             _productService = productService;
+            _webHostEnvironment = webHostEnvironment;
         }
         [HttpPost("CreateProduct")]
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductRequestModel request, CancellationToken cancellationToken)
         {
+            var files = HttpContext.Request.Form;
+            if (files != null && files.Count > 0)
+            {
+                string imageDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
+                Directory.CreateDirectory(imageDirectory);
+                foreach (var file in files.Files)
+                {
+                    FileInfo info = new FileInfo(file.FileName);
+                    string image = Guid.NewGuid().ToString() + info.Extension;
+                    string path = Path.Combine(imageDirectory, image);
+                    using (var filestream = new FileStream(path, FileMode.Create))
+                    {
+                        file.CopyTo(filestream);
+                    }
+                    request.Image = image;
+                }
+            }
             var product = await _productService.CreateProduct(request, cancellationToken);
             if (product.Status == false) return BadRequest(product);
             return Ok(product);
@@ -27,6 +50,23 @@ namespace Roqeeb_Project.Controllers
         [HttpPut("UpdateProduct")]
         public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductRequestModel request, CancellationToken cancellationToken)
         {
+            var files = HttpContext.Request.Form;
+            if (files != null && files.Count > 0)
+            {
+                string imageDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
+                Directory.CreateDirectory(imageDirectory);
+                foreach (var file in files.Files)
+                {
+                    FileInfo info = new FileInfo(file.FileName);
+                    string image = Guid.NewGuid().ToString() + info.Extension;
+                    string path = Path.Combine(imageDirectory, image);
+                    using (var filestream = new FileStream(path, FileMode.Create))
+                    {
+                        file.CopyTo(filestream);
+                    }
+                    request.Image = image;
+                }
+            }
             var newProduct = await _productService.UpdateProduct(request, cancellationToken);
             if (newProduct.Status == false) return BadRequest(newProduct);
             return Ok(newProduct);

@@ -12,5 +12,6 @@ namespace Roqeeb_Project.View_Models.RequestModels
         public string SectionName { get; set; }
         public bool IsAvalaible { get; set; }
         public int SetLowQuantity { get; set; }
+        public string Image { get; set; }
     }
 }

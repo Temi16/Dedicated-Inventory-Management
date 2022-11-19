@@ -19,7 +19,7 @@ namespace Roqeeb_Project.Implementation.Identity.Repositories
         {
             _context = context;
         }
-        public IQueryable<User> Users => throw new System.NotImplementedException();
+        public IQueryable<User> Users => _context.Users.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).AsQueryable();
 
         public async Task AddToRoleAsync(User user, string roleName, CancellationToken cancellationToken)
         {
@@ -74,6 +74,7 @@ namespace Roqeeb_Project.Implementation.Identity.Repositories
             var user = await _context.Users
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
+                .Include(u => u.Orders)
                 .SingleOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail, cancellationToken);
             return user;
         }
@@ -88,6 +89,7 @@ namespace Roqeeb_Project.Implementation.Identity.Repositories
             var user = await _context.Users
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
+                .Include(u => u.Orders)
                 .SingleOrDefaultAsync(u => u.Id == userId, cancellationToken);
             return user;
             
@@ -104,6 +106,7 @@ namespace Roqeeb_Project.Implementation.Identity.Repositories
             var user = await _context.Users
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
+                .Include(u => u.Orders)
                 .SingleOrDefaultAsync(u => u.Username.ToLower() == normalizedUserName, cancellationToken);
             return user;
         }

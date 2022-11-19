@@ -6,5 +6,6 @@
         public int Quantity { get; set; } 
         public double CostPrice { get; set; }
         public double SellingPrice { get; set; }
+        public string Image { get; set; }
     }
 }

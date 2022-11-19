@@ -26,7 +26,7 @@ namespace Roqeeb_Project.BackgroundTask
             _serviceScopeFactory = serviceScopeFactory;
             _logger = logger;
             _schedule = CrontabSchedule.Parse(_config.CronExpression);
-            _nextRun = _schedule.GetNextOccurrence(DateTime.UtcNow);
+            _nextRun = _schedule.GetNextOccurrence(DateTime.UtcNow.AddMilliseconds(5));
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -50,19 +50,20 @@ namespace Roqeeb_Project.BackgroundTask
                             ProductName = myProduct.Data.ProductName,
                             Quantity = myProduct.Data.Quantity
                         };
+                        
                         if(product.Quantity < product.SetLowQuantity || product.Quantity == product.SetLowQuantity)
                         {
-                           //await lowProductContext.LowProductMessage(newProduct, stoppingToken);
                             var notification = new Notification
                             {
                                 IsRead = false,
-                                Message = $"You have {product.Quantity} pieces of {product.ProductName} left"
+                                Message = $"There are {product.Quantity} pieces of {product.ProductName} left, please do well to add to sale before it finishes"
                             };
-                            var create = scope.ServiceProvider.GetRequiredService<INotificationRepository>();
-                            await create.CreateAsync(notification, stoppingToken);
-                            //await _notificationRepository.CreateAsync(notification, stoppingToken);
+                                var create = scope.ServiceProvider.GetRequiredService<INotificationRepository>();
+                                await create.CreateAsync(notification, stoppingToken);
                             
+  
                         }
+                       
                     }
                 }
                 catch(Exception e)
@@ -73,7 +74,9 @@ namespace Roqeeb_Project.BackgroundTask
                 _logger.LogInformation($"Background Hosted Servie for {nameof(ProductReminder)} is stopping");
                 var timeSpan = _nextRun - now;
                 await Task.Delay(timeSpan, stoppingToken);
-                _nextRun = _schedule.GetNextOccurrence(DateTime.UtcNow.AddHours(3));
+                _nextRun = _schedule.GetNextOccurrence(DateTime.UtcNow.AddMilliseconds(5));
+
+
             }
         }
     }

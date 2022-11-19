@@ -27,7 +27,7 @@ namespace Roqeeb_Project.Controllers
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
             var stores = await _storeService.GetAllStore(cancellationToken);
-            if (stores.Status == false) return BadRequest(stores.Message);
+            if (stores.Status == false) return BadRequest(stores);
             return Ok(stores);
         }
     }

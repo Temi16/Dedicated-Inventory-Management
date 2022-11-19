@@ -12,6 +12,5 @@ namespace Roqeeb_Project.Entities
         public string Email { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
-        public ICollection<Order> Order { get; set; } = new HashSet<Order>();
     }
 }

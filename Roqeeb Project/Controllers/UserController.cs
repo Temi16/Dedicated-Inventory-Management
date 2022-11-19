@@ -52,5 +52,29 @@ namespace Roqeeb_Project.Controllers
             if (changePassword.Status == false) return BadRequest(changePassword);
             return Ok(changePassword);
         }
+        [HttpPut("UpdateDetails")]
+        public async Task<IActionResult> Details ([FromRoute]string userId, [FromForm] UpdateUserRequestModel request, CancellationToken cancellatioToken)
+        {
+            cancellatioToken.ThrowIfCancellationRequested();
+            var details = await _userService.UpdateDetails(userId, request, cancellatioToken);
+            if (details.Status == false) return BadRequest(details);
+            return Ok(details);
+        }
+        [HttpGet("GetUser/{userId}")]
+        public async Task<IActionResult> GetUser([FromRoute] string userId, CancellationToken cancellatioToken)
+        {
+            cancellatioToken.ThrowIfCancellationRequested();
+            var user = await _userService.GetUser(userId, cancellatioToken);
+            if (user.Status == false) return BadRequest(user);
+            return Ok(user);
+        }
+        [HttpGet("GetUsers")]
+        public IActionResult GetAllUsers(CancellationToken cancellatioToken)
+        {
+            cancellatioToken.ThrowIfCancellationRequested();
+            var users = _userService.GetAllUsers(cancellatioToken);
+            if (users.Status == false) return BadRequest(users);
+            return Ok(users);
+        }
     }
 }

@@ -64,6 +64,7 @@ namespace Roqeeb_Project.Implementation.Service
                 CreatedOn = DateTime.UtcNow,
                 IsAvalaible = request.IsAvalaible,
                 SetLowQuantity = request.SetLowQuantity,
+                Image = request.Image,
                 IsDeleted = false,
                 
             };
@@ -238,6 +239,7 @@ namespace Roqeeb_Project.Implementation.Service
             product.CostPrice = request.CostPrice == 0 ? product.CostPrice : request.CostPrice;
             product.SellingPrice = request.SellingPrice == 0 ? product.SellingPrice : request.SellingPrice;
             product.ProductName = request.ProductName ?? request.ProductName;
+            product.Image = request.Image ?? product.Image;
             product.LastModifiedBy = _identityService.GetUserIdentity();
             product.LastModifiedOn = DateTime.UtcNow;
             await _productRepository.UpdateProduct(product, cancellationToken);
@@ -281,6 +283,7 @@ namespace Roqeeb_Project.Implementation.Service
                     Quantity = p.Quantity,
                     SellingPrice = p.SellingPrice,
                     SetLowQuantity = p.SetLowQuantity,
+                    Image = p.Image,
                     SectionName = p.productSections.Select(ps => new SectionDTO 
                     {
                         Id = ps.SectionId,

@@ -11,5 +11,6 @@ namespace Roqeeb_Project.Interface.Service
         Task<BaseResponse<NotificationDTO>> ReadMessage(string notificationId, CancellationToken cancellationToken);
         Task<BaseResponse<NotificationDTO>> ClearAll(CancellationToken cancellationToken);
         Task<BaseResponse<IList<NotificationDTO>>> GetAll(CancellationToken cancellationToken);
+        Task<BaseResponse<IList<NotificationDTO>>> GetAllReadMessages(CancellationToken cancellationToken);
     }
 }

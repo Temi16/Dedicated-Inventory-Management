@@ -78,6 +78,7 @@ namespace Roqeeb_Project
                   };
 
               });
+            services.AddAuthorization();
            
 
         }
@@ -103,8 +104,9 @@ namespace Roqeeb_Project
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseStaticFiles();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -23,5 +23,21 @@ namespace Roqeeb_Project.Controllers
             if (notifications.Status == false) return BadRequest(notifications);
             return Ok(notifications);
         }
+        [HttpGet("ReadNotifications")]
+        public async Task<IActionResult> AllReadNotifications(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var notifications = await _notificationService.GetAllReadMessages(cancellationToken);
+            if (notifications.Status == false) return BadRequest(notifications);
+            return Ok(notifications);
+        }
+        [HttpPost("ReadMessage/{notificationId}")]
+        public async Task<IActionResult> ReadNotification(string notificationId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var notification = await _notificationService.ReadMessage(notificationId, cancellationToken);
+            if (notification.Status == false) return BadRequest(notification);
+            return Ok(notification);
+        }
     }
 }

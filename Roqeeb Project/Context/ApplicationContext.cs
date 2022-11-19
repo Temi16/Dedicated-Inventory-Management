@@ -78,10 +78,19 @@ namespace Roqeeb_Project.Context
                 Name = "Employee",
                 IsDeleted = false
             });
-           
+            string roleId3 = Guid.NewGuid().ToString();
+            modelBuilder.Entity<Role>().HasData(new Role
+            {
+                Id = roleId3,
+                Name = "Customer",
+                IsDeleted = false
+            });
+
 
         }
-
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<CustomerCart> CustomerCarts { get; set; }
+        public DbSet<ProductCustomerCart> ProductCustomerCarts { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<ProductSalesCart> ProductSalesCarts { get; set; }
         public DbSet<SalesCart> SalesCarts { get; set; }

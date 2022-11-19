@@ -52,6 +52,7 @@ namespace Roqeeb_Project.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     IsAvalaible = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     SetLowQuantity = table.Column<int>(type: "int", nullable: false),
+                    Image = table.Column<string>(type: "text", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -381,6 +382,33 @@ namespace Roqeeb_Project.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CustomerCarts",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(767)", nullable: false),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    TotalAmount = table.Column<double>(type: "double", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
+                    DeletedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DeletedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CustomerCarts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CustomerCarts_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
@@ -575,8 +603,9 @@ namespace Roqeeb_Project.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(767)", nullable: false),
                     ReferenceNo = table.Column<string>(type: "text", nullable: true),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
-                    CustomerId1 = table.Column<string>(type: "varchar(767)", nullable: true),
+                    CustomerCartId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    UserId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    IsApproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -589,9 +618,79 @@ namespace Roqeeb_Project.Migrations
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Customers_CustomerId1",
-                        column: x => x.CustomerId1,
-                        principalTable: "Customers",
+                        name: "FK_Orders_CustomerCarts_CustomerCartId",
+                        column: x => x.CustomerCartId,
+                        principalTable: "CustomerCarts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductCustomerCarts",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(767)", nullable: false),
+                    ProductName = table.Column<string>(type: "text", nullable: true),
+                    ProductQuantity = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<double>(type: "double", nullable: false),
+                    CustomerCartId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
+                    DeletedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DeletedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductCustomerCarts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductCustomerCarts_CustomerCarts_CustomerCartId",
+                        column: x => x.CustomerCartId,
+                        principalTable: "CustomerCarts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(767)", nullable: false),
+                    ReferrenceNumber = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    AmountPaid = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    DateOfPayment = table.Column<string>(type: "text", nullable: true),
+                    OrderId = table.Column<string>(type: "varchar(767)", nullable: true),
+                    IsVerified = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
+                    DeletedOn = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DeletedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Payments_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -599,33 +698,38 @@ namespace Roqeeb_Project.Migrations
             migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "Description", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
-                values: new object[] { "fb059154-1856-40bc-8608-0b2b04e4b0a2", null, null, null, null, null, false, null, null, "Admin" });
-
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "Description", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
-                values: new object[] { "9d88d0ab-71ec-4ff3-85eb-e776a7eb34cf", null, null, null, null, null, false, null, null, "Employee" });
+                values: new object[,]
+                {
+                    { "b42f1c56-735f-46d3-8f48-53f6429839f8", null, null, null, null, null, false, null, null, "Admin" },
+                    { "1b9dc26d-79c0-46c4-8cb2-b9f6604f9f7f", null, null, null, null, null, false, null, null, "Employee" },
+                    { "ac94d19e-9b5b-4aca-84ba-27d4544f4490", null, null, null, null, null, false, null, null, "Customer" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "Email", "FirstName", "IsDeleted", "IsEmailConfirmed", "LastModifiedBy", "LastModifiedOn", "LastName", "Password", "Salt", "Username" },
-                values: new object[] { "2803058e-1d20-40bc-9866-4664cd0c1ede", null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, true, null, null, "Temidayo", "temi123Ucf0r0ay1zFDWA==", "Ucf0r0ay1zFDWA==", "RRT" });
+                values: new object[] { "40f6fd92-fabf-4cf1-a31c-bf8bb4ccb5f1", null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, true, null, null, "Temidayo", "temi123OeiSYzO4bSdwjQ==", "OeiSYzO4bSdwjQ==", "RRT" });
 
             migrationBuilder.InsertData(
                 table: "Admins",
                 columns: new[] { "Id", "Age", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "Email", "FirstName", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "LastName", "UserId" },
-                values: new object[] { "dbd0c6c8-8798-4a30-aa0e-7626c9e08447", 20, null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, null, null, "Temidayo", "2803058e-1d20-40bc-9866-4664cd0c1ede" });
+                values: new object[] { "a2c020cd-a695-4584-8bb1-8ac0a7a8c90c", 20, null, null, null, null, "raufroqeeb123@gmail.com", "Roqeeb", false, null, null, "Temidayo", "40f6fd92-fabf-4cf1-a31c-bf8bb4ccb5f1" });
 
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "DeletedBy", "DeletedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "RoleId", "UserId" },
-                values: new object[] { "32639f89-74f8-4482-89ec-ff8ea2a06935", null, null, null, null, false, null, null, "fb059154-1856-40bc-8608-0b2b04e4b0a2", "2803058e-1d20-40bc-9866-4664cd0c1ede" });
+                values: new object[] { "a9ae2b55-a2f2-4e55-b4b2-8fe253749f5e", null, null, null, null, false, null, null, "b42f1c56-735f-46d3-8f48-53f6429839f8", "40f6fd92-fabf-4cf1-a31c-bf8bb4ccb5f1" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Admins_UserId",
                 table: "Admins",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CustomerCarts_UserId",
+                table: "CustomerCarts",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_UserId",
@@ -640,9 +744,24 @@ namespace Roqeeb_Project.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_CustomerId1",
+                name: "IX_Orders_CustomerCartId",
                 table: "Orders",
-                column: "CustomerId1");
+                column: "CustomerCartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_UserId",
+                table: "Orders",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_OrderId",
+                table: "Payments",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_UserId",
+                table: "Payments",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductAdminCarts_AdminCartId",
@@ -653,6 +772,11 @@ namespace Roqeeb_Project.Migrations
                 name: "IX_ProductAdminCarts_ProductId",
                 table: "ProductAdminCarts",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductCustomerCarts_CustomerCartId",
+                table: "ProductCustomerCarts",
+                column: "CustomerCartId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductPurchases_ProductId1",
@@ -731,16 +855,22 @@ namespace Roqeeb_Project.Migrations
                 name: "Admins");
 
             migrationBuilder.DropTable(
+                name: "Customers");
+
+            migrationBuilder.DropTable(
                 name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "Notifications");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "ProductAdminCarts");
+
+            migrationBuilder.DropTable(
+                name: "ProductCustomerCarts");
 
             migrationBuilder.DropTable(
                 name: "ProductPurchases");
@@ -761,7 +891,7 @@ namespace Roqeeb_Project.Migrations
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
-                name: "Customers");
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Purchases");
@@ -779,7 +909,7 @@ namespace Roqeeb_Project.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "CustomerCarts");
 
             migrationBuilder.DropTable(
                 name: "AdminCarts");
@@ -792,6 +922,9 @@ namespace Roqeeb_Project.Migrations
 
             migrationBuilder.DropTable(
                 name: "SalesCarts");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

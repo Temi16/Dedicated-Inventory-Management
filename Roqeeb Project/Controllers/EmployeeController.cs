@@ -40,5 +40,19 @@ namespace Roqeeb_Project.Controllers
             if (employee.Status == false) return BadRequest(employee);
             return Ok(employee);
         }
+        [HttpGet("ViewAllEmployees")]
+        public async Task<IActionResult> ViewAllEmployees(CancellationToken cancellationToken)
+        {
+            var employees = await _employeeService.ViewAllEmployees(cancellationToken);
+            if (employees.Status == false) return BadRequest(employees);
+            return Ok(employees);
+        }
+        [HttpGet("ViewProductDetails")]
+        public async Task<IActionResult> ViewProductDetails(CancellationToken cancellationToken)
+        {
+            var products = await _employeeService.ProductDetails(cancellationToken);
+            if (products.Status == false) return BadRequest(products);
+            return Ok(products);
+        }
     }
 }

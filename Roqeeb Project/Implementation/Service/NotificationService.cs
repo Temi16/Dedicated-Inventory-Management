@@ -36,7 +36,7 @@ namespace Roqeeb_Project.Implementation.Service
         public async Task<BaseResponse<IList<NotificationDTO>>> GetAll(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var notifications = await _notificationRepository.GetAllAsync(n => n.IsRead == false, cancellationToken);
+            var notifications = await _notificationRepository.GetAll(cancellationToken);
             if (notifications.Count == 0) return new BaseResponse<IList<NotificationDTO>>
             {
                 Message = "No Messages",
@@ -46,12 +46,34 @@ namespace Roqeeb_Project.Implementation.Service
             {
                 Data = notifications.Select(n => new NotificationDTO
                 {
+                    Id = n.Id,
                     Message = n.Message,
                 }).ToList(),
                 Message = "Successful",
                 Status = true
             };
 
+        }
+
+        public async Task<BaseResponse<IList<NotificationDTO>>> GetAllReadMessages(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var notifications = await _notificationRepository.GetAllAsync(n => n.IsRead == true, cancellationToken);
+            if (notifications.Count == 0) return new BaseResponse<IList<NotificationDTO>>
+            {
+                Message = "No Messages",
+                Status = false
+            };
+            return new BaseResponse<IList<NotificationDTO>>
+            {
+                Data = notifications.Select(n => new NotificationDTO
+                {
+                    Id = n.Id,
+                    Message = n.Message,
+                }).ToList(),
+                Message = "Successful",
+                Status = true
+            };
         }
 
         public async Task<BaseResponse<NotificationDTO>> ReadMessage(string notificationId, CancellationToken cancellationToken)

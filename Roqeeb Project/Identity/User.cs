@@ -17,5 +17,6 @@ namespace Roqeeb_Project.Identity
         public Customer Customer { get; set; }
         public Employee Employee { get; set; }
         public ICollection<UserRole> UserRoles { get; set; } = new HashSet<UserRole>();
+        public ICollection<Order> Orders { get; set; } = new HashSet<Order>();
     }
 }

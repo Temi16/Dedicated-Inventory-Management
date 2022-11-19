@@ -11,6 +11,7 @@ namespace Roqeeb_Project.DTO_s
         public double CostPrice { get; set; }
         public double SellingPrice { get; set; }
         public int SetLowQuantity { get; set; }
+        public string Image { get; set; }
         public IList<SectionDTO> SectionName { get; set; }
     }
 }
